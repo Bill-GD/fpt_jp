@@ -1,0 +1,85 @@
+name: Release build
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_release:
+    name: Build and release on GitHub
+    if: startsWith(github.event.head_commit.message, '[release]')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@v3.12.0
+        with:
+          distribution: 'oracle'
+          java-version: '21'
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2.18.0
+        with:
+          flutter-version: 3.22.0
+          channel: stable
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Cleaning build
+        run: flutter clean
+
+      - name: Decode keystore
+        run: echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/upload-keystore.jks
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Extract version from pubspec.yaml
+        run: |
+          version_str=$(grep '^version: ' pubspec.yaml | awk '{ print $2 }')
+          version_part=$(echo $version_str | cut -d '+' -f 1)
+          echo "VERSION=$version_part" >> $GITHUB_ENV
+
+      - name: Create version string for binaries
+        run: |
+          version_bin=$(echo "${{ env.VERSION }}" | sed 's/\./_/g')
+          echo "VERSION_BIN=$version_bin" >> $GITHUB_ENV
+
+      - name: Create env
+        run: |
+          echo "VERSION=${{ env.VERSION }}" > .env
+          echo "GITHUB_TOKEN=${{ secrets.API_GITHUB_TOKEN }}" >> .env
+
+      - name: Build APKs
+        run: flutter build apk --dart-define-from-file=.env
+        env:
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      - name: Build split APKs
+        run: flutter build apk --split-per-abi --dart-define-from-file=.env
+        env:
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+
+      - name: Update binary names
+        run: |
+          mv build/app/outputs/flutter-apk/app-arm64-v8a-release.apk build/app/outputs/flutter-apk/fpt_jp_${{ env.VERSION_BIN }}-arm64-v8a.apk
+          mv build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk build/app/outputs/flutter-apk/fpt_jp_${{ env.VERSION_BIN }}-armeabi-v7a.apk
+          mv build/app/outputs/flutter-apk/app-x86_64-release.apk build/app/outputs/flutter-apk/fpt_jp_${{ env.VERSION_BIN }}-x86_64.apk
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/fpt_jp_${{ env.VERSION_BIN }}.apk
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/flutter-apk/fpt_jp_*.apk"
+          bodyFile: "release_note.md"
+          token: ${{ secrets.API_GITHUB_TOKEN }}
+          name: v${{ env.VERSION }}
+          tag: v${{ env.VERSION }}
+          allowUpdates: true
+          commit: main
+          generateReleaseNotes: true
+          makeLatest: true
