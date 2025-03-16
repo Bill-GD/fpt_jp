@@ -50,6 +50,11 @@ jobs:
         run: |
           echo "VERSION=${{ env.VERSION }}" > .env
           echo "GITHUB_TOKEN=${{ secrets.API_GITHUB_TOKEN }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_HOST=${{ vars.DATABASE_HOST }}" >> .env
+          echo "DATABASE_PORT=${{ vars.DATABASE_PORT }}" >> .env
+          echo "DATABASE_USERNAME=${{ vars.DATABASE_USERNAME }}" >> .env
+          echo "DATABASE_NAME=${{ vars.DATABASE_NAME }}" >> .env
 
       - name: Build APKs
         run: flutter build apk --dart-define-from-file=.env
