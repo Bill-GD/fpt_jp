@@ -44,3 +44,4 @@ app.*.map.json
 
 *.jks*
 *.env
+**data.sql

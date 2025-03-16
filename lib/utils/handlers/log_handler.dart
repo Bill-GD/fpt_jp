@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 import '../extensions/pad_int.dart';
 import '../helpers/globals.dart';

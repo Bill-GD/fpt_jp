@@ -6,6 +6,7 @@ import 'package:theme_provider/theme_provider.dart';
 
 import 'ui/core/ui/action_dialog.dart';
 import 'ui/core/ui/widget_error.dart';
+import 'ui/home/widgets/home_screen.dart';
 import 'utils/extensions/number_duration.dart';
 import 'utils/handlers/log_handler.dart';
 import 'utils/helpers/globals.dart';
@@ -113,7 +114,7 @@ class FPTJapaneseApp extends StatelessWidget {
               },
               theme: ThemeProvider.themeOf(context).data,
               title: 'FPT JP',
-              // home: const MainScreen(),
+              home: const HomeScreen(),
             );
           },
         ),
