@@ -4,6 +4,7 @@ import '../../../data/repositories/about_repository.dart';
 import '../../../data/repositories/kanji_repository.dart';
 import '../../../utils/command/command.dart';
 import '../../../utils/command/result.dart';
+import '../../../utils/handlers/log_handler.dart';
 import '../../kanji/view_model/kanji_view_model.dart';
 import '../../kanji/widgets/kanji_screen.dart';
 
@@ -14,7 +15,7 @@ class HomeViewModel extends ChangeNotifier {
   late final CommandParam<void, BuildContext> openGrammar;
 
   HomeViewModel({required AboutRepository aboutRepo}) : _aboutRepo = aboutRepo {
-    // _load();
+    _load();
     openKanji = CommandParam(_openKanjiScreen);
     openVocab = CommandParam(_openVocabScreen);
     openGrammar = CommandParam(_openGrammarScreen);
@@ -24,6 +25,8 @@ class HomeViewModel extends ChangeNotifier {
     final result = await _aboutRepo.getNewestVersion();
     switch (result) {
       case Ok():
+        LogHandler.log(result.value);
+        return result;
       case Error():
         return result;
     }

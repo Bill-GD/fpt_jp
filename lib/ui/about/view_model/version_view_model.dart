@@ -21,7 +21,9 @@ class VersionViewModel extends ChangeNotifier {
   String get sha => _sha;
 
   bool get dev => _dev;
+
   String get body => _body;
+
   String get timeUploaded => _timeUploaded;
 
   // For version list
@@ -35,22 +37,19 @@ class VersionViewModel extends ChangeNotifier {
   int get versionCount => _versionCount;
 
   VersionViewModel({required AboutRepository aboutRepo}) : _aboutRepo = aboutRepo {
-    getAllVersion = CommandNoParam(_getAllVersion)..execute();
+    getAllVersion = CommandNoParam(_getAllVersion);
     getRelease = CommandParam(_getRelease);
   }
 
   Future<Result<void>> _getAllVersion() async {
     final result = await _aboutRepo.getAllTags();
-    switch (result) {
-      case Ok():
-        final list = result.value.reversed.toList();
-        _tags = list.map((e) => e.$1).toList();
-        _shas = list.map((e) => e.$2).toList();
-        _versionCount = tags.length;
-        return result;
-      case Error():
-        return result;
+    if (result is Ok<List<(String, String)>>) {
+      final list = result.value.reversed.toList();
+      _tags = list.map((e) => e.$1).toList();
+      _shas = list.map((e) => e.$2).toList();
+      _versionCount = tags.length;
     }
+    return result;
   }
 
   Future<Result<void>> _getRelease((BuildContext, String, String, bool) releaseInfo) async {

@@ -11,7 +11,7 @@ Future<bool> checkInternetConnection([List<ConnectivityResult>? result]) async {
   return isInternetConnected;
 }
 
-Future<Response> apiQuery(String query) {
+Future<Response> githubAPIQuery(String query) {
   const baseApiUrl = 'https://api.github.com/repos/Bill-GD/fpt_jp';
   LogHandler.log('Querying $query');
   return get(

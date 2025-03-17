@@ -9,14 +9,18 @@ import '../../utils/helpers/helper.dart';
 
 class AboutRepository {
   Future<Result<List<(String, String)>>> getAllTags() async {
-    final value = await apiQuery('/git/refs/tags');
+    final value = await githubAPIQuery('/git/refs/tags');
     final json = jsonDecode(value.body);
     if (json == null) {
       return Result.error(Exception('Rate limited. Please come back later.'));
     }
     if (json is! List) {
-      LogHandler.log('JSON received is not a list', LogLevel.error);
-      return Result.error(Exception('Something is wrong when trying to get version list.'));
+      if (json['status'] == 404) {
+        LogHandler.log('JSON received is not a list', LogLevel.error);
+        return Result.error(Exception('Something is wrong when trying to get version list.'));
+      } else {
+        return const Result.ok([]);
+      }
     }
 
     return Result.ok(json.map((e) {
@@ -38,15 +42,14 @@ class AboutRepository {
         final tags = result.value.map((e) => e.$1).toList();
         if (tags.isEmpty) return Result.error(Exception('No tags exists'));
         newestTag = tags.last;
+        return Result.ok(newestTag);
       case Error():
         return Result.error(result.error);
     }
-
-    return Result.ok(newestTag);
   }
 
   Future<(String, String)> getRelease(String tag, String sha) async {
-    final res = await apiQuery('/releases/tags/$tag');
+    final res = await githubAPIQuery('/releases/tags/$tag');
     final json = jsonDecode(res.body);
 
     if (json == null) throw Exception('Rate limited. Please come back later.');
@@ -62,7 +65,7 @@ class AboutRepository {
     const filename = 'dev_changes.md';
 
     LogHandler.log('Getting markdown of: t=$tag, sha=$sha');
-    Response res = await apiQuery('/contents/$filename?ref=$sha');
+    Response res = await githubAPIQuery('/contents/$filename?ref=$sha');
     dynamic json = jsonDecode(res.body);
 
     if (json == null) throw Exception('Rate limited. Please come back later.');
@@ -78,7 +81,7 @@ class AboutRepository {
     ));
 
     LogHandler.log('Getting time of commit ($sha)');
-    res = await apiQuery('/commits/$sha');
+    res = await githubAPIQuery('/commits/$sha');
     json = jsonDecode(res.body);
 
     if (json == null) throw Exception('Rate limited. Please come back later.');

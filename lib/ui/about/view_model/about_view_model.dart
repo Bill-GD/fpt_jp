@@ -16,6 +16,7 @@ class AboutViewModel extends ChangeNotifier {
   late final CommandParam<void, BuildContext> showLicense;
 
   bool _isInternetConnected = false;
+  late StreamSubscription<List<ConnectivityResult>> connectStream;
 
   bool get isInternetConnected => _isInternetConnected;
 
@@ -26,7 +27,12 @@ class AboutViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _load() async {
-    Connectivity().onConnectivityChanged.listen((newResults) {
+    checkInternetConnection().then((val) {
+      _isInternetConnected = val;
+      notifyListeners();
+    });
+
+    connectStream = Connectivity().onConnectivityChanged.listen((newResults) {
       checkInternetConnection(newResults).then((val) {
         _isInternetConnected = val;
         notifyListeners();
@@ -42,12 +48,12 @@ class AboutViewModel extends ChangeNotifier {
     final canLaunch = await canLaunchUrl(uri);
     if (canLaunch) {
       LogHandler.log('The system has found a handler, can launch URL');
-      launchUrl(uri);
     } else {
       LogHandler.log(
         'URL launcher support query is not specified or can\'t launch URL, but opening regardless',
       );
     }
+    launchUrl(uri);
     return const Result.ok(null);
   }
 
