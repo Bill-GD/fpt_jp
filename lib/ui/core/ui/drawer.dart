@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../data/repositories/about_repository.dart';
 import '../../../utils/extensions/number_duration.dart';
 import '../../../utils/helpers/globals.dart';
 import '../../about/view_model/about_view_model.dart';
@@ -34,7 +33,7 @@ class _MainDrawerState extends State<MainDrawer> {
         children: [
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
               child: Column(
                 children: [
                   ListTile(
@@ -85,7 +84,7 @@ class _MainDrawerState extends State<MainDrawer> {
                         ),
                         contentFontSize: 16,
                         centerContent: false,
-                        horizontalPadding: 24,
+                        horizontalPadding: 12,
                         time: 300.ms,
                         allowScroll: true,
                         actions: [
@@ -110,7 +109,7 @@ class _MainDrawerState extends State<MainDrawer> {
                         context,
                         PageRouteBuilder(
                           pageBuilder: (_, __, ___) {
-                            return AboutScreen(viewModel: AboutViewModel(aboutRepo: AboutRepository()));
+                            return AboutScreen(viewModel: AboutViewModel());
                           },
                           transitionsBuilder: (context, anim1, _, child) {
                             return SlideTransition(

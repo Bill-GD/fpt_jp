@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../view_model/kanji_view_model.dart';
+
 class KanjiScreen extends StatefulWidget {
-  const KanjiScreen({super.key});
+  final KanjiViewModel viewModel;
+
+  const KanjiScreen({super.key, required this.viewModel});
 
   @override
   State<KanjiScreen> createState() => _KanjiScreenState();

@@ -36,10 +36,6 @@ class _AboutScreenState extends State<AboutScreen> {
         body: ListenableBuilder(
           listenable: widget.viewModel,
           builder: (context, _) {
-            if (widget.viewModel.load.running) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
             return Column(
               children: [
                 Visibility(

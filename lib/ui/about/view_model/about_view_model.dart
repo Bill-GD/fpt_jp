@@ -4,7 +4,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../data/repositories/about_repository.dart';
 import '../../../utils/command/command.dart';
 import '../../../utils/command/result.dart';
 import '../../../utils/handlers/log_handler.dart';
@@ -12,7 +11,6 @@ import '../../../utils/helpers/globals.dart';
 import '../../../utils/helpers/helper.dart';
 
 class AboutViewModel extends ChangeNotifier {
-  final AboutRepository _aboutRepo;
   late final CommandNoParam load;
   late final CommandParam<void, String> openGithubPage;
   late final CommandParam<void, BuildContext> showLicense;
@@ -21,7 +19,7 @@ class AboutViewModel extends ChangeNotifier {
 
   bool get isInternetConnected => _isInternetConnected;
 
-  AboutViewModel({required AboutRepository aboutRepo}) : _aboutRepo = aboutRepo {
+  AboutViewModel() {
     load = CommandNoParam(_load)..execute();
     openGithubPage = CommandParam(_openGithubPage);
     showLicense = CommandParam(_showLicense);
