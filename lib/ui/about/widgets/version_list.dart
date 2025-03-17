@@ -17,11 +17,21 @@ class _VersionListState extends State<VersionList> {
   @override
   void initState() {
     super.initState();
-    widget.viewModel.getAllVersion.addListener(() {
-      LogHandler.log('Got ${widget.viewModel.versionCount} tags');
-      setState(() {});
-    });
+    widget.viewModel.getAllVersion.addListener(onGotAllVersion);
     widget.viewModel.getAllVersion.execute();
+  }
+
+  @override
+  void didUpdateWidget(covariant VersionList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    widget.viewModel.getAllVersion.removeListener(onGotAllVersion);
+    widget.viewModel.getAllVersion.addListener(onGotAllVersion);
+    widget.viewModel.getAllVersion.execute();
+  }
+
+  void onGotAllVersion() {
+    LogHandler.log('Got ${widget.viewModel.versionCount} tags');
+    setState(() {});
   }
 
   @override

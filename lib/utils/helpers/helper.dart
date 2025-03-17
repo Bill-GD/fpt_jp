@@ -13,7 +13,7 @@ Future<bool> checkInternetConnection([List<ConnectivityResult>? result]) async {
 
 Future<Response> githubAPIQuery(String query) {
   const baseApiUrl = 'https://api.github.com/repos/Bill-GD/fpt_jp';
-  LogHandler.log('Querying $query');
+  LogHandler.log('Querying from GitHub: $query');
   return get(
     Uri.parse('$baseApiUrl$query'),
     headers: {'Authorization': 'Bearer ${Globals.githubToken}'},

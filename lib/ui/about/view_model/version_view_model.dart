@@ -52,6 +52,11 @@ class VersionViewModel extends ChangeNotifier {
     return result;
   }
 
+  /// [releaseInfo] is a record with 4 fields:
+  /// - [BuildContext] : context
+  /// - [String] : Tag
+  /// - [String] : SHA
+  /// - [bool] : Is this a dev release?
   Future<Result<void>> _getRelease((BuildContext, String, String, bool) releaseInfo) async {
     _tag = releaseInfo.$2;
     _sha = releaseInfo.$3;

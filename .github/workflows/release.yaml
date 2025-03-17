@@ -87,4 +87,5 @@ jobs:
           allowUpdates: true
           commit: main
           generateReleaseNotes: true
-          makeLatest: true
+          makeLatest: ${{ !vars.PRERELEASE }}
+          prerelease: ${{ vars.PRERELEASE }}

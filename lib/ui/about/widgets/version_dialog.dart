@@ -14,8 +14,6 @@ class VersionDialog extends StatefulWidget {
 }
 
 class _VersionDialogState extends State<VersionDialog> {
-  bool loading = true;
-
   @override
   void initState() {
     super.initState();
@@ -117,16 +115,11 @@ class _VersionDialogState extends State<VersionDialog> {
             ],
           ),
         ),
-        content: loading
-            ? const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [CircularProgressIndicator()],
-              )
-            : SingleChildScrollView(
-                child: RichText(
-                  text: TextSpan(children: getContent(widget.viewModel.body)),
-                ),
-              ),
+        content: SingleChildScrollView(
+          child: RichText(
+            text: TextSpan(children: getContent(widget.viewModel.body)),
+          ),
+        ),
         contentPadding: const EdgeInsets.only(left: 20, right: 20, top: 20),
         actionsAlignment: MainAxisAlignment.spaceEvenly,
         actions: [
@@ -136,9 +129,8 @@ class _VersionDialogState extends State<VersionDialog> {
           ),
           TextButton(
             onPressed: () async {
-              final uri = Uri.parse('https://github.com/Bill-GD/music_player_app/releases/tag/${widget.viewModel.tag}');
+              final uri = Uri.parse('https://github.com/Bill-GD/fpt_jp/releases/tag/${widget.viewModel.tag}');
               final canLaunch = await canLaunchUrl(uri);
-              launchUrl(uri);
               if (canLaunch) {
                 LogHandler.log('The system has found a handler, can launch URL');
               } else if (context.mounted) {
@@ -146,6 +138,7 @@ class _VersionDialogState extends State<VersionDialog> {
                   'URL launcher support query is not specified or can\'t launch URL, but opening regardless',
                 );
               }
+              launchUrl(uri);
             },
             child: const Text('Get version'),
           ),
