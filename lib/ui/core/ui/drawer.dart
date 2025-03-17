@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../../data/repositories/about_repository.dart';
 import '../../../utils/extensions/number_duration.dart';
 import '../../../utils/helpers/globals.dart';
+import '../../about/view_model/about_view_model.dart';
+import '../../about/widgets/about_screen.dart';
 import '../styling/icon.dart';
 import '../styling/text.dart';
 import 'action_dialog.dart';
@@ -34,62 +37,10 @@ class _MainDrawerState extends State<MainDrawer> {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 children: [
-                  // ListTile(
-                  //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                  //   leading: FaIcon(FontAwesomeIcons.gear, color: iconColor(context)),
-                  //   title: const Text(
-                  //     'Settings',
-                  //     style: bottomSheetTitle,
-                  //   ),
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       PageRouteBuilder(
-                  //         pageBuilder: (_, __, ___) {
-                  //           return const SettingsScreen();
-                  //         },
-                  //         transitionsBuilder: (context, anim1, _, child) {
-                  //           return SlideTransition(
-                  //             position: Tween<Offset>(
-                  //               begin: const Offset(-1, 0),
-                  //               end: const Offset(0, 0),
-                  //             ).animate(anim1.drive(CurveTween(curve: Curves.decelerate))),
-                  //             child: child,
-                  //           );
-                  //         },
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                  // const ListItemDivider(),
-                  // ListTile(
-                  //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                  //   leading: Icon(Icons.download_rounded, color: iconColor(context)),
-                  //   title: const Text('Download Music', style: bottomSheetTitle),
-                  //   onTap: () {
-                  //     Navigator.of(context).push<bool>(
-                  //       PageRouteBuilder(
-                  //         pageBuilder: (_, __, ___) {
-                  //           return const MusicDownloader();
-                  //         },
-                  //         transitionsBuilder: (context, anim1, _, child) {
-                  //           return SlideTransition(
-                  //             position: Tween<Offset>(
-                  //               begin: const Offset(-1, 0),
-                  //               end: const Offset(0, 0),
-                  //             ).animate(anim1.drive(CurveTween(curve: Curves.decelerate))),
-                  //             child: child,
-                  //           );
-                  //         },
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                  const ListItemDivider(),
                   ListTile(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     leading: FaIcon(Icons.logo_dev, color: iconColor(context)),
-                    title: const Text('Log', style: bottomSheetTitle),
+                    title: const Text('Log', style: titleTextStyle),
                     onTap: () async {
                       final logLines = File(Globals.logPath).readAsLinesSync();
                       final contentLines = <String>[];
@@ -143,6 +94,34 @@ class _MainDrawerState extends State<MainDrawer> {
                             child: const Text('OK'),
                           ),
                         ],
+                      );
+                    },
+                  ),
+                  const ListItemDivider(),
+                  ListTile(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    leading: FaIcon(FontAwesomeIcons.gear, color: iconColor(context)),
+                    title: const Text(
+                      'About',
+                      style: titleTextStyle,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (_, __, ___) {
+                            return AboutScreen(viewModel: AboutViewModel(aboutRepo: AboutRepository()));
+                          },
+                          transitionsBuilder: (context, anim1, _, child) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(-1, 0),
+                                end: const Offset(0, 0),
+                              ).animate(anim1.drive(CurveTween(curve: Curves.decelerate))),
+                              child: child,
+                            );
+                          },
+                        ),
                       );
                     },
                   ),

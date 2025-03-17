@@ -9,11 +9,13 @@ abstract class Command<T> extends ChangeNotifier {
   Result<T>? _result;
   bool _running = false;
 
+  Result? get result => _result;
+
   bool get hasError => _result is Error;
 
   bool get completed => _result is Ok;
 
-  Result? get result => _result;
+  bool get running => _running;
 
   void clearResult() {
     _result = null;

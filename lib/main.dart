@@ -4,8 +4,10 @@ import 'package:flutter/scheduler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:theme_provider/theme_provider.dart';
 
+import 'data/repositories/about_repository.dart';
 import 'ui/core/ui/action_dialog.dart';
 import 'ui/core/ui/widget_error.dart';
+import 'ui/home/view_model/home_view_model.dart';
 import 'ui/home/widgets/home_screen.dart';
 import 'utils/extensions/number_duration.dart';
 import 'utils/handlers/log_handler.dart';
@@ -114,7 +116,7 @@ class FPTJapaneseApp extends StatelessWidget {
               },
               theme: ThemeProvider.themeOf(context).data,
               title: 'FPT JP',
-              home: const HomeScreen(),
+              home: HomeScreen(viewModel: HomeViewModel(aboutRepo: AboutRepository())),
             );
           },
         ),

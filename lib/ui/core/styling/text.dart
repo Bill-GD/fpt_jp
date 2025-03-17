@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-const TextStyle bottomSheetTitle = TextStyle(
+const TextStyle titleTextStyle = TextStyle(
   fontSize: 18,
   fontWeight: FontWeight.w700,
 );
 
-const TextStyle bottomSheetText = TextStyle(
-  fontSize: 17,
+const TextStyle bodyTextStyle = TextStyle(
+  fontSize: 14,
   fontWeight: FontWeight.w600,
 );
 
