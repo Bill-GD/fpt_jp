@@ -8,7 +8,7 @@ import '../../../utils/extensions/number_duration.dart';
 import '../../../utils/helpers/globals.dart';
 import '../../../utils/helpers/helper.dart';
 import '../../kanji/view_model/kanji_view_model.dart';
-import '../../kanji/widgets/kanji_screen.dart';
+import '../../kanji/widgets/kanji_lesson_list_screen.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final AboutRepository _aboutRepo;
@@ -32,25 +32,29 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _load() async {
-    final result = await _aboutRepo.getNewestVersion();
-    switch (result) {
-      case Ok():
-        // remote
-        final remote = parseVersionString(result.value.substring(1)), local = parseVersionString(Globals.appVersion);
-        _newestVersion = remote['tag'];
+    if (Globals.shouldGetNewVersion) {
+      Globals.shouldGetNewVersion = false;
+      final result = await _aboutRepo.getNewestVersion();
+      switch (result) {
+        case Ok():
+          // remote
+          final remote = parseVersionString(result.value.substring(1)), local = parseVersionString(Globals.appVersion);
+          _newestVersion = remote['tag'];
 
-        if (remote['major'] <= local['major'] ||
-            remote['minor'] <= local['minor'] ||
-            remote['patch'] <= local['patch'] ||
-            (remote['isDev'] && local['isDev'] && remote['devBuild'] <= local['devBuild'])) {
-          _shouldShowNewVersion = false;
-          notifyListeners();
-          Future.delayed(200.ms, () => _shouldShowNewVersion = false);
-        }
-        return result;
-      case Error():
-        return result;
+          if (remote['major'] <= local['major'] ||
+              remote['minor'] <= local['minor'] ||
+              remote['patch'] <= local['patch'] ||
+              (remote['isDev'] && local['isDev'] && remote['devBuild'] <= local['devBuild'])) {
+            _shouldShowNewVersion = false;
+            notifyListeners();
+            Future.delayed(200.ms, () => _shouldShowNewVersion = false);
+          }
+          return result;
+        case Error():
+          return result;
+      }
     }
+    return const Result.ok(null);
   }
 
   Future<Result<void>> _openKanjiScreen(BuildContext context) async {
@@ -58,7 +62,7 @@ class HomeViewModel extends ChangeNotifier {
       context,
       PageRouteBuilder(
         pageBuilder: (_, __, ___) {
-          return KanjiScreen(viewModel: KanjiViewModel(kanjiRepo: KanjiRepository()));
+          return KanjiLessonListScreen(viewModel: KanjiViewModel(kanjiRepo: KanjiRepository()));
         },
         transitionsBuilder: (context, anim1, _, child) {
           return SlideTransition(

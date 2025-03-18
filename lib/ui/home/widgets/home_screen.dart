@@ -41,11 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          leading: const DrawerButton(),
+          actions: const [EndDrawerButton()],
           title: const Text('Review FPT Japanese'),
           centerTitle: true,
         ),
-        drawer: const MainDrawer(),
+        endDrawer: const MainDrawer(),
         body: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

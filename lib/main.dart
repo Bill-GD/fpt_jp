@@ -10,6 +10,7 @@ import 'ui/core/ui/widget_error.dart';
 import 'ui/home/view_model/home_view_model.dart';
 import 'ui/home/widgets/home_screen.dart';
 import 'utils/extensions/number_duration.dart';
+import 'utils/handlers/database_handler.dart';
 import 'utils/handlers/log_handler.dart';
 import 'utils/helpers/globals.dart';
 
@@ -21,6 +22,8 @@ void main() async {
 
   LogHandler.init();
   LogHandler.log('App version: ${Globals.appVersion}, isDev: ${Globals.isDev}');
+
+  await DatabaseHandler.init();
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   PlatformDispatcher.instance.onError = (e, s) {

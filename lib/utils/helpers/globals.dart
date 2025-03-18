@@ -7,4 +7,6 @@ class Globals {
   static const githubToken = String.fromEnvironment('GITHUB_TOKEN');
 
   static final isDev = Globals.appVersion.contains('_dev_');
+
+  static bool shouldGetNewVersion = true;
 }

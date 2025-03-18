@@ -32,7 +32,7 @@ class _AboutScreenState extends State<AboutScreen> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded),
+            icon: const Icon(Icons.arrow_forward_ios_rounded),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: const Text(

@@ -114,7 +114,7 @@ class _MainDrawerState extends State<MainDrawer> {
                           transitionsBuilder: (context, anim1, _, child) {
                             return SlideTransition(
                               position: Tween<Offset>(
-                                begin: const Offset(-1, 0),
+                                begin: const Offset(1, 0),
                                 end: const Offset(0, 0),
                               ).animate(anim1.drive(CurveTween(curve: Curves.decelerate))),
                               child: child,

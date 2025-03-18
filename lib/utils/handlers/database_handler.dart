@@ -1,5 +1,7 @@
 import 'package:mysql_client/mysql_client.dart';
 
+import 'log_handler.dart';
+
 class DatabaseHandler {
   static late final MySQLConnection _db;
 
@@ -15,5 +17,7 @@ class DatabaseHandler {
     );
 
     await _db.connect();
+
+    LogHandler.log('Database initialized');
   }
 }
