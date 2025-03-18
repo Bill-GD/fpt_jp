@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../data/repositories/about_repository.dart';
 import '../../../utils/extensions/number_duration.dart';
 import '../../../utils/helpers/globals.dart';
-import '../../core/styling/text.dart';
+import '../../core/ui/leading_text.dart';
 import '../view_model/about_view_model.dart';
 import '../view_model/version_view_model.dart';
 import 'version_list.dart';
@@ -61,12 +61,12 @@ class _AboutScreenState extends State<AboutScreen> {
                 Flexible(
                   child: ListView(
                     children: [
-                      ListTile(
-                        title: leadingText(context, 'Current version', false, 16),
-                        subtitle: const Text(Globals.appVersion),
+                      const ListTile(
+                        title: LeadingText('Current version', bold: false, size: 16),
+                        subtitle: Text(Globals.appVersion),
                       ),
                       ListTile(
-                        title: leadingText(context, 'Version list', false, 16),
+                        title: const LeadingText('Version list', bold: false, size: 16),
                         subtitle: const Text('View the list of versions of this app'),
                         onTap: () {
                           if (!widget.viewModel.isInternetConnected) return;
@@ -91,19 +91,19 @@ class _AboutScreenState extends State<AboutScreen> {
                         },
                       ),
                       ListTile(
-                        title: leadingText(context, 'Licenses', false, 16),
+                        title: const LeadingText('Licenses', bold: false, size: 16),
                         subtitle: const Text('View open-source licenses'),
                         onTap: () => widget.viewModel.showLicense.execute(context),
                       ),
                       ListTile(
-                        title: leadingText(context, 'Get releases', false, 16),
+                        title: const LeadingText('Get releases', bold: false, size: 16),
                         subtitle: const Text('Get the releases of this app'),
                         onTap: () async {
                           await widget.viewModel.openGithubPage.execute('https://github.com/Bill-GD/fpt_jp/releases');
                         },
                       ),
                       ListTile(
-                        title: leadingText(context, 'GitHub Repo', false, 16),
+                        title: const LeadingText('GitHub Repo', bold: false, size: 16),
                         subtitle: const Text('Open GitHub repository of this app'),
                         onTap: () async {
                           await widget.viewModel.openGithubPage.execute('https://github.com/Bill-GD/fpt_jp');

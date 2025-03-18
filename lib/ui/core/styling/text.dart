@@ -37,12 +37,3 @@ const TextStyle bodyTextStyle = TextStyle(
 //       border: border,
 //       constraints: constraints,
 //     );
-
-Text leadingText(BuildContext context, String text, [bool bold = true, double size = 18]) => Text(
-      text,
-      style: TextStyle(
-        fontSize: size,
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
-        fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-      ),
-    );

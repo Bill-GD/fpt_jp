@@ -1,5 +1,3 @@
-- Setup workspace, environment.
-- Setup MVVM file structure: Command, Result, Views, View models, Repositories, Widgets.
-- Implemented MVVM sample: fetch app release(s).
-- Added logging, error handling, database connection, extensions.
-- Most assets/widgets are taken from Music Hub and modified to fit.
+- Moved `LeadingText` to widgets.
+- Improved checking for new version.
+- Home screen listens for loading execution and show new version dialog if needed.
