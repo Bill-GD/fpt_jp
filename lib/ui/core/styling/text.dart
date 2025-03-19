@@ -35,7 +35,7 @@ InputDecoration textFieldDecoration({
     prefixIcon: prefixIcon,
     suffixIcon: suffixIcon,
     suffixIconConstraints: const BoxConstraints(minHeight: 2, minWidth: 2),
-    contentPadding: contentPadding ?? const EdgeInsets.symmetric(horizontal: 20),
+    contentPadding: contentPadding ?? const EdgeInsets.symmetric(horizontal: 16),
     border: border,
     constraints: constraints,
   );

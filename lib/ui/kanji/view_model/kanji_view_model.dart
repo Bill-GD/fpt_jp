@@ -21,9 +21,8 @@ class KanjiViewModel extends ChangeNotifier {
       toLast,
       resetWordIndex,
       toggleVisibility,
-      shuffleWords,
-      openAddKanji;
-  late final CommandParam<void, int> queueLesson;
+      shuffleWords;
+  late final CommandParam<void, int> queueLesson, openAddKanji;
 
   List<KanjiLesson> _lessons = [];
   List<KanjiWord> _words = [];
@@ -51,7 +50,7 @@ class KanjiViewModel extends ChangeNotifier {
     toFirst = CommandNoParam(_toFirst);
     toLast = CommandNoParam(_toLast);
     shuffleWords = CommandNoParam(_shuffleWords);
-    openAddKanji = CommandNoParam(_openAddKanji);
+    openAddKanji = CommandParam(_openAddKanji);
   }
 
   Future<Result<void>> _loadList() async {
@@ -127,12 +126,17 @@ class KanjiViewModel extends ChangeNotifier {
     return const Result.ok(null);
   }
 
-  Future<Result<void>> _openAddKanji() async {
+  Future<Result<void>> _openAddKanji(int num) async {
     Navigator.push(
       getGlobalContext(),
       PageRouteBuilder(
         pageBuilder: (_, __, ___) {
-          return AddKanjiScreen(viewModel: AddKanjiViewModel(kanjiRepo: KanjiRepository()));
+          return AddKanjiScreen(
+            viewModel: AddKanjiViewModel(
+              kanjiRepo: KanjiRepository(),
+              lessonNum: num,
+            ),
+          );
         },
         transitionsBuilder: (context, anim1, _, child) {
           return SlideTransition(

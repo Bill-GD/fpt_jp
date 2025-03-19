@@ -1,9 +1,9 @@
 class KanjiWord {
   final int id;
   final int lessonNum;
-  final String word, pronunciation, sinoViet, meaning;
+  String word, pronunciation, sinoViet, meaning;
 
-  const KanjiWord({
+  KanjiWord({
     required this.id,
     required this.lessonNum,
     required this.word,

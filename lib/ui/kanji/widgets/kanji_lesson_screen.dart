@@ -75,7 +75,7 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
                           width: 2,
                           color: Theme.of(context).colorScheme.onSurface,
                         )),
-                        borderRadius: const BorderRadius.all(Radius.circular(10)),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       constraints: BoxConstraints.loose(const Size(400, 400)),
                       child: Text(

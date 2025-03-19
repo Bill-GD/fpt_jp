@@ -204,7 +204,7 @@ AlertDialog _dialog(
     actions: actions,
     actionsPadding: const EdgeInsets.symmetric(vertical: 12),
     shape: RoundedRectangleBorder(
-      borderRadius: const BorderRadius.all(Radius.circular(10)),
+      borderRadius: BorderRadius.circular(10),
       side: BorderSide(color: Theme.of(context).colorScheme.onSurface),
     ),
     insetPadding: EdgeInsets.only(

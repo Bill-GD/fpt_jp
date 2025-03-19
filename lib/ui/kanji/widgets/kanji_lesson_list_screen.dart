@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../utils/extensions/number_duration.dart';
 import '../../../utils/handlers/log_handler.dart';
 import '../../core/styling/text.dart';
+import '../../core/ui/action_dialog.dart';
 import '../../core/ui/drawer.dart';
 import '../view_model/kanji_view_model.dart';
 import 'kanji_lesson_screen.dart';
@@ -112,6 +113,19 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                             ),
                             title: Text('Lesson ${lesson.lessonNum}'),
                             subtitle: Text('${lesson.wordCount} words'),
+                            trailing: PopupMenuButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              itemBuilder: (_) => [
+                                PopupMenuItem(
+                                  onTap: () => widget.viewModel.openAddKanji.execute(lesson.lessonNum),
+                                  child: const Text('Add new Kanji'),
+                                ),
+                              ],
+                              position: PopupMenuPosition.under,
+                              child: const Icon(Icons.more_vert_rounded),
+                            ),
                             onTap: () async {
                               await widget.viewModel.queueLesson.execute(lesson.lessonNum);
                               action();
@@ -129,7 +143,34 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
       ),
       // floatingActionButtonAnimator: FloatingActionButtonAnimator(),
       floatingActionButton: FloatingActionButton(
-        onPressed: widget.viewModel.openAddKanji.execute,
+        onPressed: () async {
+          final controller = TextEditingController();
+          await ActionDialog.static(
+            context,
+            title: 'Create new lesson',
+            titleFontSize: 18,
+            widgetContent: TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              decoration: textFieldDecoration(
+                fillColor: Theme.of(context).colorScheme.surface,
+                border: const OutlineInputBorder(),
+                labelText: 'Lesson number',
+                hintText: '1',
+              ),
+            ),
+            contentFontSize: 14,
+            time: 200.ms,
+            actions: [
+              TextButton(
+                onPressed: () => widget.viewModel.openAddKanji.execute(
+                  int.parse(controller.text),
+                ),
+                child: const Text('Create'),
+              ),
+            ],
+          );
+        },
         child: const Icon(Icons.add_rounded),
       ),
     );
