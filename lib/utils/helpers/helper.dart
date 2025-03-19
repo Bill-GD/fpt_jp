@@ -37,3 +37,18 @@ Map<String, dynamic> parseVersionString(String tag) {
   map['patch'] = int.parse(split.first.split('.')[2]);
   return map;
 }
+
+bool isVersionNewer(String remoteVer) {
+  final remote = parseVersionString(remoteVer), local = parseVersionString(Globals.appVersion);
+  if (remote['major'] != local['major']) {
+    return remote['major'] > local['major'];
+  }
+  if (remote['minor'] != local['minor']) {
+    return remote['minor'] > local['minor'];
+  }
+  if (remote['patch'] != local['patch']) {
+    return remote['patch'] > local['patch'];
+  }
+  if (remote['isDev'] && local['isDev'] && remote['devBuild'] > local['devBuild']) return true;
+  return false;
+}

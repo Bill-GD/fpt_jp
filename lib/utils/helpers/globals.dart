@@ -8,5 +8,5 @@ class Globals {
 
   static final isDev = Globals.appVersion.contains('_dev_');
 
-  static bool shouldGetNewVersion = true;
+  static String newestVersion = '';
 }

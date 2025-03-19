@@ -20,20 +20,32 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    widget.viewModel.load.addListener(() {
-      if (widget.viewModel.shouldShowNewVersion) {
-        ActionDialog.static<void>(
-          context,
-          title: 'New version available',
-          titleFontSize: titleTextStyle.fontSize!,
-          textContent: 'Current version: v${Globals.appVersion}\n'
-              'New version: v${widget.viewModel.newestVersion}\n\n'
-              'Check the about page for more details.',
-          contentFontSize: bodyTextStyle.fontSize!,
-          time: 200.ms,
-        );
-      }
-    });
+    widget.viewModel.load.addListener(onLoad);
+  }
+
+  void onLoad() {
+    ActionDialog.static<void>(
+      context,
+      title: 'New version available',
+      titleFontSize: titleTextStyle.fontSize!,
+      textContent: 'Current version: v${Globals.appVersion}\n'
+          'New version: v${Globals.newestVersion}\n\n'
+          'Check the about page for more details.',
+      contentFontSize: bodyTextStyle.fontSize!,
+      time: 200.ms,
+      actions: [
+        TextButton(
+          onPressed: Navigator.of(context).pop,
+          child: const Text('OK'),
+        )
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    widget.viewModel.load.removeListener(onLoad);
+    super.dispose();
   }
 
   @override

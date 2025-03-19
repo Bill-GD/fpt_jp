@@ -29,9 +29,12 @@ abstract class Command<T> extends ChangeNotifier {
     _result = null;
     notifyListeners();
 
-    _result = await action();
-    _running = false;
-    notifyListeners();
+    try {
+      _result = await action();
+    } finally {
+      _running = false;
+      notifyListeners();
+    }
   }
 }
 

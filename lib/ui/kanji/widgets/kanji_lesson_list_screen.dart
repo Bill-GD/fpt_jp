@@ -26,11 +26,9 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
   }
 
   @override
-  void didUpdateWidget(covariant KanjiLessonListScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
+  void dispose() {
     widget.viewModel.loadList.removeListener(onLoad);
-    widget.viewModel.loadList.addListener(onLoad);
-    widget.viewModel.loadList.execute();
+    super.dispose();
   }
 
   void onLoad() {
