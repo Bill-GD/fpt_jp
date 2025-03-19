@@ -7,8 +7,8 @@ permissions:
   contents: write
 
 jobs:
-  build_and_release:
-    name: Build and release on GitHub
+  build_android:
+    name: Build APKs
     if: startsWith(github.event.head_commit.message, '[release]')
     runs-on: ubuntu-latest
     steps:
@@ -17,6 +17,7 @@ jobs:
         with:
           distribution: 'oracle'
           java-version: '19'
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2.18.0
         with:
@@ -29,7 +30,7 @@ jobs:
       - name: Cleaning build
         run: flutter clean
 
-      - name: Decode keystore
+      - name: Decode Android keystore
         run: echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/upload-keystore.jks
 
       - name: Install dependencies
@@ -62,6 +63,7 @@ jobs:
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+
       - name: Build split APKs
         run: flutter build apk --split-per-abi --dart-define-from-file=.env
         env:
@@ -76,10 +78,103 @@ jobs:
           mv build/app/outputs/flutter-apk/app-x86_64-release.apk build/app/outputs/flutter-apk/fpt_jp_${{ env.VERSION_BIN }}-x86_64.apk
           mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/fpt_jp_${{ env.VERSION_BIN }}.apk
 
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: apks
+          path: build/app/outputs/flutter-apk/fpt_jp_*.apk
+
+  build_windows:
+    name: Build MSIX
+    if: startsWith(github.event.head_commit.message, '[release]')
+    runs-on: windows-latest
+    steps:
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2.18.0
+        with:
+          flutter-version: 3.22.0
+          channel: stable
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Cleaning build
+        run: flutter clean
+        
+      - name: Decode MSIX keystore
+        run: |
+          $base64Content = "${{ secrets.PFX_BASE64 }}"
+          [System.IO.File]::WriteAllBytes("windows/upload-keystore.pfx", [System.Convert]::FromBase64String($base64Content))
+        shell: pwsh
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Extract version from pubspec.yaml
+        run: |
+          $version_str = Select-String -Path pubspec.yaml -Pattern '^version: ' | ForEach-Object { $_.Line.Split(' ')[1] }
+          $version_part = $version_str.Split('+')[0]
+          echo "VERSION=$version_part" >> $env:GITHUB_ENV
+        shell: pwsh
+
+      - name: Create version string for binaries
+        run: |
+          $version_bin = $env:VERSION -replace '\.', '_'
+          echo "VERSION_BIN=$version_bin" >> $env:GITHUB_ENV
+        shell: pwsh
+
+      - name: Create env
+        run: |
+          echo "VERSION=${{ env.VERSION }}" > .env
+          echo "GITHUB_TOKEN=${{ secrets.API_GITHUB_TOKEN }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_HOST=${{ vars.DATABASE_HOST }}" >> .env
+          echo "DATABASE_PORT=${{ vars.DATABASE_PORT }}" >> .env
+          echo "DATABASE_USERNAME=${{ vars.DATABASE_USERNAME }}" >> .env
+          echo "DATABASE_NAME=${{ vars.DATABASE_NAME }}" >> .env
+
+      - name: Build Windows MSIX
+        run: dart run msix:create -c windows/upload-keystore.pfx -p ${{ secrets.KEY_PASSWORD }} --windows-build-args "--dart-define-from-file=.env" --install-certificate false
+
+      - name: Update binary names
+        run: move build/windows/x64/runner/Release/fpt_jp.msix build/windows/x64/runner/Release/fpt_jp_${{ env.VERSION_BIN }}.msix
+
+      - name: Upload Windows MSIX
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-msix
+          path: build/windows/x64/runner/Release/fpt_jp_*.msix
+
+  create_release:
+    name: Create Release
+    needs: [ build_android, build_windows ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Download APKs
+        uses: actions/download-artifact@v4
+        with:
+          name: apks
+          path: build/app/outputs/flutter-apk
+
+      - name: Download Windows MSIX
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-msix
+          path: build/windows/x64/runner/Release
+
+      - name: Extract version from pubspec.yaml
+        run: |
+          version_str=$(grep '^version: ' pubspec.yaml | awk '{ print $2 }')
+          version_part=$(echo $version_str | cut -d '+' -f 1)
+          echo "VERSION=$version_part" >> $GITHUB_ENV
+
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/flutter-apk/fpt_jp_*.apk"
+          artifacts: "build/app/outputs/flutter-apk/fpt_jp_*.apk,build/windows/x64/runner/Release/fpt_jp_*.msix"
           bodyFile: "release_note.md"
           token: ${{ secrets.API_GITHUB_TOKEN }}
           name: v${{ env.VERSION }}
