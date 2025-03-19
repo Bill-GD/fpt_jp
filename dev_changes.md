@@ -7,5 +7,7 @@
 - Added buttons to move to first & last Kanji word of the lesson
 - Moved `SafeArea` from `Scaffold`'s parent to its `body`
 - Fixed `MainDrawer` rounded corners are on the wrong side
+- Added button to each lesson in the list, allowing adding new Kanji to them
 - Can add new Kanji lesson, which uses the same `AddKanjiScreen`
-- Added button to each lesson, allowing adding new Kanji to them
+- Version list is now opened from the appropriate side
+- Added Windows version

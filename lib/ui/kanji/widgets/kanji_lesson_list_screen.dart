@@ -44,11 +44,14 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            onPressed: () async {
-              widget.viewModel.loadList.execute();
-            },
+          Tooltip(
+            message: 'Refresh the list',
+            child: IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () async {
+                widget.viewModel.loadList.execute();
+              },
+            ),
           ),
           const EndDrawerButton(),
         ],
@@ -64,13 +67,19 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  OutlinedButton(
-                    onPressed: () {},
-                    child: const Text('All lessons'),
+                  Tooltip(
+                    message: 'Review all Kanji',
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      child: const Text('All lessons'),
+                    ),
                   ),
-                  OutlinedButton(
-                    onPressed: () {},
-                    child: const Text('Lesson range'),
+                  Tooltip(
+                    message: 'Select range of lesson to review',
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      child: const Text('Lesson range'),
+                    ),
                   ),
                 ],
               ),
@@ -163,9 +172,13 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
             time: 200.ms,
             actions: [
               TextButton(
-                onPressed: () => widget.viewModel.openAddKanji.execute(
-                  int.parse(controller.text),
-                ),
+                onPressed: () {
+                  final lessonNum = int.tryParse(controller.text);
+                  if (lessonNum != null) {
+                    Navigator.pop(context);
+                    widget.viewModel.openAddKanji.execute(lessonNum);
+                  }
+                },
                 child: const Text('Create'),
               ),
             ],

@@ -1,5 +1,7 @@
 ## Features
 
+- Added a Windows Desktop version.
+- New Kanji words can now be added to lessons.
 - Kanji words can now be shuffled.
 - Can now quickly move to the first or last Kanji word of the lesson.
 
@@ -7,6 +9,7 @@
 
 - App's UI now extend to under the status bar.
 - Increased Kanji font size.
+- Version list is now opened from the appropriate side.
 
 ## Fixes
 

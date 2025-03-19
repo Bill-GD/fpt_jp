@@ -5,11 +5,12 @@ import '../../../domain/models/kanji_word.dart';
 import '../../../utils/command/command.dart';
 import '../../../utils/command/result.dart';
 import '../../../utils/helpers/enums.dart';
+import '../../../utils/helpers/helper.dart';
 
 class AddKanjiViewModel extends ChangeNotifier {
   final KanjiRepository _kanjiRepo;
 
-  late final CommandNoParam<void> addNewWord;
+  late final CommandNoParam<void> addNewWord, insertWords;
   late final CommandParam<void, int> removeWord;
   late final CommandParam<void, (int, WordUpdateType, String)> updateWord;
 
@@ -37,6 +38,7 @@ class AddKanjiViewModel extends ChangeNotifier {
     addNewWord = CommandNoParam(_addNewWord);
     removeWord = CommandParam(_removeWord);
     updateWord = CommandParam(_updateWord);
+    insertWords = CommandNoParam(_insertWords);
   }
 
   Future<Result<void>> _addNewWord() async {
@@ -70,6 +72,12 @@ class AddKanjiViewModel extends ChangeNotifier {
       case WordUpdateType.sino:
         _words[index].sinoViet = value;
     }
+    return const Result.ok(null);
+  }
+
+  Future<Result<void>> _insertWords() async {
+    await _kanjiRepo.insertKanji(_words);
+    Navigator.pop(getGlobalContext());
     return const Result.ok(null);
   }
 }

@@ -2,6 +2,7 @@ import '../../domain/models/kanji_lesson.dart';
 import '../../domain/models/kanji_word.dart';
 import '../../utils/command/result.dart';
 import '../../utils/handlers/database_handler.dart';
+import '../../utils/helpers/helper.dart';
 
 class KanjiRepository {
   Future<Result<List<KanjiLesson>>> getLessonList() async {
@@ -29,5 +30,24 @@ class KanjiRepository {
           meaning: e['meaning']!,
         ));
     return Result.ok(words.toList());
+  }
+
+  Future<Result<void>> insertKanji(List<KanjiWord> words) async {
+    final queries = words.map((e) => 'insert into kanji_word (lesson_num, word, pronunciation, sino_viet, meaning) '
+        'values (:lesson_num, :word, :pronunciation, :sino_viet, :meaning)');
+
+    for (final i in range(0, words.length - 1)) {
+      await DatabaseHandler.execute(
+        queries.elementAt(i),
+        {
+          'lesson_num': words[i].lessonNum,
+          'word': words[i].word.trim(),
+          'pronunciation': words[i].pronunciation.trim(),
+          'sino_viet': words[i].sinoViet.trim(),
+          'meaning': words[i].meaning.trim(),
+        },
+      );
+    }
+    return const Result.ok(null);
   }
 }

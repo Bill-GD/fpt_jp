@@ -70,9 +70,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: widget.viewModel.openKanji.execute,
                 child: const Text('Kanji'),
               ),
-              OutlinedButton(
-                onPressed: widget.viewModel.openVocab.execute,
-                child: const Text('Vocabulary'),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: OutlinedButton(
+                  onPressed: widget.viewModel.openVocab.execute,
+                  child: const Text('Vocabulary'),
+                ),
               ),
               OutlinedButton(
                 onPressed: widget.viewModel.openGrammar.execute,

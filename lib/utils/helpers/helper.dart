@@ -61,3 +61,8 @@ BuildContext getGlobalContext() {
   }
   return Globals.navigatorKey.currentContext!;
 }
+
+/// [start] and [end] are inclusive
+List<int> range(int start, int end) {
+  return List<int>.generate(end - start + 1, (i) => i + start);
+}
