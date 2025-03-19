@@ -12,8 +12,8 @@ class VersionViewModel extends ChangeNotifier {
   late final CommandParam<void, (BuildContext, String, String, bool)> getRelease;
 
   // For version dialog
-  late final String _tag, _sha;
-  late final bool _dev;
+  String _tag = '', _sha = '';
+  bool _dev = false;
   String _body = '', _timeUploaded = '';
 
   String get tag => _tag;

@@ -6,11 +6,23 @@ import '../../../domain/models/kanji_word.dart';
 import '../../../utils/command/command.dart';
 import '../../../utils/command/result.dart';
 import '../../../utils/handlers/log_handler.dart';
+import '../../../utils/helpers/helper.dart';
+import '../widgets/add_kanji_screen.dart';
+import 'add_kanji_view_model.dart';
 
 class KanjiViewModel extends ChangeNotifier {
   final KanjiRepository _kanjiRepo;
 
-  late final CommandNoParam<void> loadList, loadLesson, nextWord, prevWord, resetWordIndex, toggleVisibility;
+  late final CommandNoParam<void> loadList,
+      loadLesson,
+      nextWord,
+      prevWord,
+      toFirst,
+      toLast,
+      resetWordIndex,
+      toggleVisibility,
+      shuffleWords,
+      openAddKanji;
   late final CommandParam<void, int> queueLesson;
 
   List<KanjiLesson> _lessons = [];
@@ -36,6 +48,10 @@ class KanjiViewModel extends ChangeNotifier {
     nextWord = CommandNoParam(_nextWord);
     prevWord = CommandNoParam(_prevWord);
     resetWordIndex = CommandNoParam(_resetWordIndex);
+    toFirst = CommandNoParam(_toFirst);
+    toLast = CommandNoParam(_toLast);
+    shuffleWords = CommandNoParam(_shuffleWords);
+    openAddKanji = CommandNoParam(_openAddKanji);
   }
 
   Future<Result<void>> _loadList() async {
@@ -87,8 +103,48 @@ class KanjiViewModel extends ChangeNotifier {
     return const Result.ok(null);
   }
 
+  Future<Result<void>> _toFirst() async {
+    _currentWordIndex = 0;
+    notifyListeners();
+    return const Result.ok(null);
+  }
+
+  Future<Result<void>> _toLast() async {
+    _currentWordIndex = _words.length - 1;
+    notifyListeners();
+    return const Result.ok(null);
+  }
+
+  Future<Result<void>> _shuffleWords() async {
+    _currentWordIndex = 0;
+    _words.shuffle();
+    notifyListeners();
+    return const Result.ok(null);
+  }
+
   Future<Result<void>> _resetWordIndex() async {
     _currentWordIndex = 0;
+    return const Result.ok(null);
+  }
+
+  Future<Result<void>> _openAddKanji() async {
+    Navigator.push(
+      getGlobalContext(),
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) {
+          return AddKanjiScreen(viewModel: AddKanjiViewModel(kanjiRepo: KanjiRepository()));
+        },
+        transitionsBuilder: (context, anim1, _, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 1),
+              end: const Offset(0, 0),
+            ).animate(anim1.drive(CurveTween(curve: Curves.decelerate))),
+            child: child,
+          );
+        },
+      ),
+    );
     return const Result.ok(null);
   }
 }

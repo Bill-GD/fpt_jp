@@ -1,3 +1,9 @@
-- Moved `LeadingText` to widgets.
-- Improved checking for new version.
-- Home screen listens for loading execution and show new version dialog if needed.
+- Fixed not able to set new tag when trying to view a different version note
+- Fixed lessons has all the Kanjis
+- `DatabaseHandler` no longer exposes `MySQLConnection`
+- Fixed not reconnecting when database disconnects
+- Moved `navigatorKey` to `Globals`
+- Can shuffle Kanji words
+- Added buttons to move to first & last Kanji word of the lesson
+- Moved `SafeArea` from `Scaffold`'s parent to its `body`
+- Fixed `MainDrawer` rounded corners are on the wrong side

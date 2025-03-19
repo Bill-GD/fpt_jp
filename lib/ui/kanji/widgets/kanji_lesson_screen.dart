@@ -36,15 +36,15 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          actions: const [EndDrawerButton()],
-          title: Text('Lesson ${widget.viewModel.currentLessonNum}'),
-          centerTitle: true,
-        ),
-        endDrawer: const MainDrawer(),
-        body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        actions: const [EndDrawerButton()],
+        title: Text('Lesson ${widget.viewModel.currentLessonNum}'),
+        centerTitle: true,
+      ),
+      endDrawer: const MainDrawer(),
+      body: SafeArea(
+        child: Center(
           child: ListenableBuilder(
             listenable: widget.viewModel,
             builder: (context, _) {
@@ -82,7 +82,7 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
                         widget.viewModel.isWordVisible
                             ? '${word.sinoViet}\n${word.pronunciation}\n${word.meaning}'
                             : word.word,
-                        style: titleTextStyle.copyWith(fontSize: 24),
+                        style: titleTextStyle.copyWith(fontSize: widget.viewModel.isWordVisible ? 24 : 32),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -91,14 +91,26 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       IconButton(
+                        icon: const Icon(Icons.keyboard_double_arrow_left_rounded),
+                        onPressed: index <= 0 ? null : widget.viewModel.toFirst.execute,
+                      ),
+                      IconButton(
                         icon: const Icon(Icons.arrow_back_ios_new_rounded),
-                        onPressed: index == 0 ? null : widget.viewModel.prevWord.execute,
+                        onPressed: index <= 0 ? null : widget.viewModel.prevWord.execute,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.shuffle),
+                        onPressed: widget.viewModel.shuffleWords.execute,
                       ),
                       IconButton(
                         icon: const Icon(Icons.arrow_forward_ios_rounded),
                         onPressed: index >= wordCount - 1 //
                             ? null
                             : widget.viewModel.nextWord.execute,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.keyboard_double_arrow_right_rounded),
+                        onPressed: index >= wordCount - 1 ? null : widget.viewModel.toLast.execute,
                       ),
                     ],
                   )

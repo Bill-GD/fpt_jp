@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' show Response, get;
 
 import '../handlers/log_handler.dart';
@@ -51,4 +52,12 @@ bool isVersionNewer(String remoteVer) {
   }
   if (remote['isDev'] && local['isDev'] && remote['devBuild'] > local['devBuild']) return true;
   return false;
+}
+
+BuildContext getGlobalContext() {
+  if (Globals.navigatorKey.currentContext == null) {
+    LogHandler.log('Global context is null');
+    throw Exception('Global context is null');
+  }
+  return Globals.navigatorKey.currentContext!;
 }

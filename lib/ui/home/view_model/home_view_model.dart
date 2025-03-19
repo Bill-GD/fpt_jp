@@ -13,9 +13,9 @@ import '../../kanji/widgets/kanji_lesson_list_screen.dart';
 class HomeViewModel extends ChangeNotifier {
   final AboutRepository _aboutRepo;
   late final CommandNoParam<void> load;
-  late final CommandParam<void, BuildContext> openKanji;
-  late final CommandParam<void, BuildContext> openVocab;
-  late final CommandParam<void, BuildContext> openGrammar;
+  late final CommandNoParam<void> openKanji;
+  late final CommandNoParam<void> openVocab;
+  late final CommandNoParam<void> openGrammar;
 
   bool _shouldShowNewVersion = false;
 
@@ -23,9 +23,9 @@ class HomeViewModel extends ChangeNotifier {
 
   HomeViewModel({required AboutRepository aboutRepo}) : _aboutRepo = aboutRepo {
     load = CommandNoParam(_load)..execute();
-    openKanji = CommandParam(_openKanjiScreen);
-    openVocab = CommandParam(_openVocabScreen);
-    openGrammar = CommandParam(_openGrammarScreen);
+    openKanji = CommandNoParam(_openKanjiScreen);
+    openVocab = CommandNoParam(_openVocabScreen);
+    openGrammar = CommandNoParam(_openGrammarScreen);
   }
 
   Future<Result<void>> _load() async {
@@ -41,9 +41,9 @@ class HomeViewModel extends ChangeNotifier {
     return const Result.ok(null);
   }
 
-  Future<Result<void>> _openKanjiScreen(BuildContext context) async {
+  Future<Result<void>> _openKanjiScreen() async {
     Navigator.push(
-      context,
+      getGlobalContext(),
       PageRouteBuilder(
         pageBuilder: (_, __, ___) {
           return KanjiLessonListScreen(viewModel: KanjiViewModel(kanjiRepo: KanjiRepository()));
@@ -62,11 +62,11 @@ class HomeViewModel extends ChangeNotifier {
     return const Result.ok(null);
   }
 
-  Future<Result<void>> _openVocabScreen(BuildContext context) async {
+  Future<Result<void>> _openVocabScreen() async {
     return const Result.ok(null);
   }
 
-  Future<Result<void>> _openGrammarScreen(BuildContext context) async {
+  Future<Result<void>> _openGrammarScreen() async {
     return const Result.ok(null);
   }
 }

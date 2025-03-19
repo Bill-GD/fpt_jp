@@ -25,10 +25,9 @@ void main() async {
 
   await DatabaseHandler.init();
 
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   PlatformDispatcher.instance.onError = (e, s) {
     LogHandler.log(e.toString(), LogLevel.error);
-    final curContext = navigatorKey.currentContext;
+    final curContext = Globals.navigatorKey.currentContext;
     if (curContext == null) return false;
 
     ActionDialog.static<void>(
@@ -57,7 +56,7 @@ void main() async {
     return true;
   };
 
-  runApp(FPTJapaneseApp(navKey: navigatorKey));
+  runApp(FPTJapaneseApp(navKey: Globals.navigatorKey));
 }
 
 class FPTJapaneseApp extends StatelessWidget {

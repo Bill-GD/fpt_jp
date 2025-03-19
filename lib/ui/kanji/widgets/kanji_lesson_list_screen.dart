@@ -40,23 +40,23 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh_rounded),
-              onPressed: () async {
-                widget.viewModel.loadList.execute();
-              },
-            ),
-            const EndDrawerButton(),
-          ],
-          title: const Text('Kanji'),
-          centerTitle: true,
-        ),
-        endDrawer: const MainDrawer(),
-        body: Column(
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: () async {
+              widget.viewModel.loadList.execute();
+            },
+          ),
+          const EndDrawerButton(),
+        ],
+        title: const Text('Kanji'),
+        centerTitle: true,
+      ),
+      endDrawer: const MainDrawer(),
+      body: SafeArea(
+        child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -101,7 +101,7 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                         closedColor: Theme.of(context).colorScheme.surface,
                         openColor: Colors.transparent,
                         transitionDuration: 400.ms,
-                        openBuilder: (context, action) {
+                        openBuilder: (context, _) {
                           return KanjiLessonScreen(viewModel: widget.viewModel);
                         },
                         closedBuilder: (context, action) {
@@ -126,6 +126,11 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
             ),
           ],
         ),
+      ),
+      // floatingActionButtonAnimator: FloatingActionButtonAnimator(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: widget.viewModel.openAddKanji.execute,
+        child: const Icon(Icons.add_rounded),
       ),
     );
   }

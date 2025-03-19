@@ -24,22 +24,24 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void onLoad() {
-    ActionDialog.static<void>(
-      context,
-      title: 'New version available',
-      titleFontSize: titleTextStyle.fontSize!,
-      textContent: 'Current version: v${Globals.appVersion}\n'
-          'New version: v${Globals.newestVersion}\n\n'
-          'Check the about page for more details.',
-      contentFontSize: bodyTextStyle.fontSize!,
-      time: 200.ms,
-      actions: [
-        TextButton(
-          onPressed: Navigator.of(context).pop,
-          child: const Text('OK'),
-        )
-      ],
-    );
+    if (widget.viewModel.shouldShowNewVersion) {
+      ActionDialog.static<void>(
+        context,
+        title: 'New version available',
+        titleFontSize: titleTextStyle.fontSize!,
+        textContent: 'Current version: v${Globals.appVersion}\n'
+            'New version: v${Globals.newestVersion}\n\n'
+            'Check the about page for more details.',
+        contentFontSize: bodyTextStyle.fontSize!,
+        time: 200.ms,
+        actions: [
+          TextButton(
+            onPressed: Navigator.of(context).pop,
+            child: const Text('OK'),
+          )
+        ],
+      );
+    }
   }
 
   @override
@@ -50,30 +52,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          actions: const [EndDrawerButton()],
-          title: const Text('Review FPT Japanese'),
-          centerTitle: true,
-        ),
-        endDrawer: const MainDrawer(),
-        body: Container(
+    return Scaffold(
+      appBar: AppBar(
+        actions: const [EndDrawerButton()],
+        title: const Text('Review FPT Japanese'),
+        centerTitle: true,
+      ),
+      endDrawer: const MainDrawer(),
+      body: SafeArea(
+        child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               OutlinedButton(
-                onPressed: () => widget.viewModel.openKanji.execute(context),
+                onPressed: widget.viewModel.openKanji.execute,
                 child: const Text('Kanji'),
               ),
               OutlinedButton(
-                onPressed: () => widget.viewModel.openVocab.execute(context),
+                onPressed: widget.viewModel.openVocab.execute,
                 child: const Text('Vocabulary'),
               ),
               OutlinedButton(
-                onPressed: () => widget.viewModel.openGrammar.execute(context),
+                onPressed: widget.viewModel.openGrammar.execute,
                 child: const Text('Grammar'),
               ),
             ],

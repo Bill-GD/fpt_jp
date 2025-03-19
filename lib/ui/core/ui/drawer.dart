@@ -24,7 +24,7 @@ class _MainDrawerState extends State<MainDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.horizontal(right: Radius.circular(30)),
+        borderRadius: BorderRadius.horizontal(left: Radius.circular(30)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
