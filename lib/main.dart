@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -17,7 +19,9 @@ import 'utils/helpers/globals.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Globals.storagePath = (await getExternalStorageDirectory())?.parent.path ?? '';
+  Globals.storagePath = Platform.isAndroid
+      ? (await getExternalStorageDirectory())?.parent.path ?? ''
+      : Platform.resolvedExecutable.split(Platform.executable).first;
   Globals.logPath = '${Globals.storagePath}/files/log.txt';
 
   LogHandler.init();
