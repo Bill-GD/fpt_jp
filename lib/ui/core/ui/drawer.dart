@@ -26,109 +26,111 @@ class _MainDrawerState extends State<MainDrawer> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.horizontal(left: Radius.circular(30)),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-              child: Column(
-                children: [
-                  ListTile(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                    leading: FaIcon(Icons.logo_dev, color: iconColor(context)),
-                    title: const Text('Log', style: titleTextStyle),
-                    onTap: () async {
-                      final logLines = File(Globals.logPath).readAsLinesSync();
-                      final contentLines = <String>[];
+      child: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+                child: Column(
+                  children: [
+                    ListTile(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      leading: FaIcon(Icons.logo_dev, color: iconColor(context)),
+                      title: const Text('Log', style: titleTextStyle),
+                      onTap: () async {
+                        final logLines = File(Globals.logPath).readAsLinesSync();
+                        final contentLines = <String>[];
 
-                      for (final line in logLines) {
-                        if (line.isEmpty || !line.contains(']')) continue;
+                        for (final line in logLines) {
+                          if (line.isEmpty || !line.contains(']')) continue;
 
-                        final isError = line.contains('[E]'), isWarn = line.contains('[W]');
-                        final time = line.substring(0, line.indexOf(']') + 1).trim();
-                        final content = line.substring(line.indexOf(']') + 5).trim();
-                        // final content = line;
-                        contentLines.add('t$time\n');
-                        contentLines.add('${isError ? 'e' : isWarn ? 'w' : 'i'} - $content\n');
-                        contentLines.add(' \n');
-                      }
-                      contentLines.removeLast();
-                      contentLines.last = contentLines.last.substring(0, contentLines.last.length - 1);
+                          final isError = line.contains('[E]'), isWarn = line.contains('[W]');
+                          final time = line.substring(0, line.indexOf(']') + 1).trim();
+                          final content = line.substring(line.indexOf(']') + 5).trim();
+                          // final content = line;
+                          contentLines.add('t$time\n');
+                          contentLines.add('${isError ? 'e' : isWarn ? 'w' : 'i'} - $content\n');
+                          contentLines.add(' \n');
+                        }
+                        contentLines.removeLast();
+                        contentLines.last = contentLines.last.substring(0, contentLines.last.length - 1);
 
-                      final textSpans = <TextSpan>[];
-                      for (var line in contentLines) {
-                        final lineColor = switch (line[0]) {
-                          'e' => Theme.of(context).colorScheme.error,
-                          'w' => Colors.amber[700],
-                          't' => Theme.of(context).colorScheme.secondary,
-                          _ => Theme.of(context).textTheme.bodyMedium?.color,
-                        };
-                        textSpans.add(TextSpan(
-                          text: line.substring(1),
-                          style: TextStyle(color: lineColor),
-                        ));
-                      }
+                        final textSpans = <TextSpan>[];
+                        for (var line in contentLines) {
+                          final lineColor = switch (line[0]) {
+                            'e' => Theme.of(context).colorScheme.error,
+                            'w' => Colors.amber[700],
+                            't' => Theme.of(context).colorScheme.secondary,
+                            _ => Theme.of(context).textTheme.bodyMedium?.color,
+                          };
+                          textSpans.add(TextSpan(
+                            text: line.substring(1),
+                            style: TextStyle(color: lineColor),
+                          ));
+                        }
 
-                      await ActionDialog.static<void>(
-                        context,
-                        title: 'Application log',
-                        titleFontSize: 28,
-                        widgetContent: RichText(
-                          text: TextSpan(
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 16),
-                            children: textSpans,
+                        await ActionDialog.static<void>(
+                          context,
+                          title: 'Application log',
+                          titleFontSize: 28,
+                          widgetContent: RichText(
+                            text: TextSpan(
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 16),
+                              children: textSpans,
+                            ),
                           ),
-                        ),
-                        contentFontSize: 16,
-                        centerContent: false,
-                        horizontalPadding: 12,
-                        time: 300.ms,
-                        allowScroll: true,
-                        actions: [
-                          TextButton(
-                            onPressed: Navigator.of(context).pop,
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  const ListItemDivider(),
-                  ListTile(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                    leading: FaIcon(FontAwesomeIcons.gear, color: iconColor(context)),
-                    title: const Text(
-                      'About',
-                      style: titleTextStyle,
+                          contentFontSize: 16,
+                          centerContent: false,
+                          horizontalPadding: 12,
+                          time: 300.ms,
+                          allowScroll: true,
+                          actions: [
+                            TextButton(
+                              onPressed: Navigator.of(context).pop,
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (_, __, ___) {
-                            return AboutScreen(viewModel: AboutViewModel());
-                          },
-                          transitionsBuilder: (context, anim1, _, child) {
-                            return SlideTransition(
-                              position: Tween<Offset>(
-                                begin: const Offset(1, 0),
-                                end: const Offset(0, 0),
-                              ).animate(anim1.drive(CurveTween(curve: Curves.decelerate))),
-                              child: child,
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                    const ListItemDivider(),
+                    ListTile(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      leading: FaIcon(FontAwesomeIcons.gear, color: iconColor(context)),
+                      title: const Text(
+                        'About',
+                        style: titleTextStyle,
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (_, __, ___) {
+                              return AboutScreen(viewModel: AboutViewModel());
+                            },
+                            transitionsBuilder: (context, anim1, _, child) {
+                              return SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(1, 0),
+                                  end: const Offset(0, 0),
+                                ).animate(anim1.drive(CurveTween(curve: Curves.decelerate))),
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

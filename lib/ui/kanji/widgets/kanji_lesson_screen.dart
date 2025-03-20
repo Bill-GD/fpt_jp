@@ -39,7 +39,13 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
     return Scaffold(
       appBar: AppBar(
         actions: const [EndDrawerButton()],
-        title: Text('Lesson ${widget.viewModel.currentLessonNum}'),
+        title: Text(
+          widget.viewModel.isMultiLesson
+              ? 'Lesson ${widget.viewModel.lessonRange.$1} - ${widget.viewModel.lessonRange.$2}'
+              : widget.viewModel.currentLessonNum > 0
+                  ? 'Lesson ${widget.viewModel.currentLessonNum}'
+                  : 'All Kanji',
+        ),
         centerTitle: true,
       ),
       endDrawer: const MainDrawer(),

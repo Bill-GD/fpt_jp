@@ -22,12 +22,14 @@ class KanjiViewModel extends ChangeNotifier {
       resetWordIndex,
       toggleVisibility,
       shuffleWords;
-  late final CommandParam<void, int> queueLesson, openAddKanji;
+  late final CommandParam<void, (int, int)> queueLesson;
+  late final CommandParam<void, int> openAddKanji;
 
   List<KanjiLesson> _lessons = [];
   List<KanjiWord> _words = [];
-  bool _isWordVisible = false;
+  bool _isWordVisible = false, _isMultiLesson = false;
   int _currentLessonNum = -1, _currentWordIndex = 0;
+  (int, int) _lessonRange = (-1, -1);
 
   List<KanjiLesson> get lessons => _lessons;
 
@@ -35,9 +37,13 @@ class KanjiViewModel extends ChangeNotifier {
 
   bool get isWordVisible => _isWordVisible;
 
+  bool get isMultiLesson => _isMultiLesson;
+
   int get currentLessonNum => _currentLessonNum;
 
   int get currentWordIndex => _currentWordIndex;
+
+  (int, int) get lessonRange => _lessonRange;
 
   KanjiViewModel({required KanjiRepository kanjiRepo}) : _kanjiRepo = kanjiRepo {
     loadList = CommandNoParam(_loadList);
@@ -62,19 +68,28 @@ class KanjiViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<Result<void>> _queueLesson(int lessonNum) async {
-    _currentLessonNum = lessonNum;
-    LogHandler.log('Queued lesson $lessonNum');
+  Future<Result<void>> _queueLesson((int, int) lessonRange) async {
+    final (lower, upper) = lessonRange;
+    if (lower == upper) {
+      _currentLessonNum = lower;
+      _isMultiLesson = false;
+      LogHandler.log('Queued lesson: $lower');
+      return const Result.ok(null);
+    }
+    if (lower > upper) return Result.error(Exception('Starting lesson is higher than ending lesson'));
+
+    _isMultiLesson = true;
+    _lessonRange = lessonRange;
     return const Result.ok(null);
   }
 
   Future<Result<void>> _loadLesson() async {
-    final result = await _kanjiRepo.getKanjiOfLesson(_currentLessonNum);
+    final result = await _kanjiRepo.getKanjiOfLesson(_lessonRange.$1, _lessonRange.$2);
     switch (result) {
       case Ok<List<KanjiWord>>():
         _words = result.value;
         _isWordVisible = false;
-        LogHandler.log('Got ${_words.length} words for lesson $_currentLessonNum');
+        LogHandler.log('Got ${_words.length} words');
       case Error<List<KanjiWord>>():
         throw result.error;
     }
@@ -104,12 +119,14 @@ class KanjiViewModel extends ChangeNotifier {
 
   Future<Result<void>> _toFirst() async {
     _currentWordIndex = 0;
+    _isWordVisible = false;
     notifyListeners();
     return const Result.ok(null);
   }
 
   Future<Result<void>> _toLast() async {
     _currentWordIndex = _words.length - 1;
+    _isWordVisible = false;
     notifyListeners();
     return const Result.ok(null);
   }
@@ -117,6 +134,7 @@ class KanjiViewModel extends ChangeNotifier {
   Future<Result<void>> _shuffleWords() async {
     _currentWordIndex = 0;
     _words.shuffle();
+    _isWordVisible = false;
     notifyListeners();
     return const Result.ok(null);
   }

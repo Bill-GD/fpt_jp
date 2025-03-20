@@ -67,19 +67,96 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Tooltip(
-                    message: 'Review all Kanji',
-                    child: OutlinedButton(
-                      onPressed: () {},
-                      child: const Text('All lessons'),
-                    ),
+                  OpenContainer(
+                    closedElevation: 0,
+                    closedColor: Theme.of(context).colorScheme.surface,
+                    openColor: Colors.transparent,
+                    transitionDuration: 400.ms,
+                    openBuilder: (context, _) {
+                      return KanjiLessonScreen(viewModel: widget.viewModel);
+                    },
+                    closedBuilder: (context, action) {
+                      return Tooltip(
+                        message: 'Review all Kanji',
+                        child: OutlinedButton(
+                          onPressed: () async {
+                            await widget.viewModel.queueLesson.execute((0, 0));
+                            action();
+                          },
+                          child: const Text('All lessons'),
+                        ),
+                      );
+                    },
                   ),
-                  Tooltip(
-                    message: 'Select range of lesson to review',
-                    child: OutlinedButton(
-                      onPressed: () {},
-                      child: const Text('Lesson range'),
-                    ),
+                  OpenContainer(
+                    closedElevation: 0,
+                    closedColor: Theme.of(context).colorScheme.surface,
+                    openColor: Colors.transparent,
+                    transitionDuration: 400.ms,
+                    openBuilder: (context, _) {
+                      return KanjiLessonScreen(viewModel: widget.viewModel);
+                    },
+                    closedBuilder: (context, action) {
+                      final lowerControl = TextEditingController(), upperControl = TextEditingController();
+
+                      return Tooltip(
+                        message: 'Select range of lesson to review',
+                        child: OutlinedButton(
+                          onPressed: () async {
+                            await ActionDialog.static(
+                              context,
+                              title: 'Create new lesson',
+                              titleFontSize: 18,
+                              widgetContent: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextField(
+                                    controller: lowerControl,
+                                    keyboardType: TextInputType.number,
+                                    decoration: textFieldDecoration(
+                                      fillColor: Theme.of(context).colorScheme.surface,
+                                      border: const OutlineInputBorder(),
+                                      labelText: 'From',
+                                      hintText: '1',
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: TextField(
+                                      controller: upperControl,
+                                      keyboardType: TextInputType.number,
+                                      decoration: textFieldDecoration(
+                                        fillColor: Theme.of(context).colorScheme.surface,
+                                        border: const OutlineInputBorder(),
+                                        labelText: 'To',
+                                        hintText: '3',
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              contentFontSize: 14,
+                              time: 200.ms,
+                              actions: [
+                                TextButton(
+                                  onPressed: () async {
+                                    final lower = int.tryParse(lowerControl.text),
+                                        upper = int.tryParse(upperControl.text);
+                                    if (lower != null && upper != null) {
+                                      Navigator.pop(context);
+                                      await widget.viewModel.queueLesson.execute((lower, upper));
+                                      action();
+                                    }
+                                  },
+                                  child: const Text('Learn'),
+                                ),
+                              ],
+                            );
+                          },
+                          child: const Text('Lesson range'),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -136,7 +213,7 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                               child: const Icon(Icons.more_vert_rounded),
                             ),
                             onTap: () async {
-                              await widget.viewModel.queueLesson.execute(lesson.lessonNum);
+                              await widget.viewModel.queueLesson.execute((lesson.lessonNum, lesson.lessonNum));
                               action();
                             },
                           );

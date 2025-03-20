@@ -16,10 +16,10 @@ class KanjiRepository {
     return Result.ok(lessons.toList());
   }
 
-  Future<Result<List<KanjiWord>>> getKanjiOfLesson(int num) async {
+  Future<Result<List<KanjiWord>>> getKanjiOfLesson(int from, int to) async {
     final result = await DatabaseHandler.execute(
-      'select * from kanji_word where lesson_num = :lesson_num',
-      {'lesson_num': num},
+      'select * from kanji_word${from > 0 && to > 0 ? ' where lesson_num between :from and :to' : ''}',
+      {'from': from, 'to': to},
     );
     final words = result.rows.map((e) => e.assoc()).map((e) => KanjiWord(
           id: int.parse(e['id']!),
