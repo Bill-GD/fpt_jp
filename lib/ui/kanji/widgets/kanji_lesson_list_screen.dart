@@ -142,7 +142,7 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                                   onPressed: () async {
                                     final lower = int.tryParse(lowerControl.text),
                                         upper = int.tryParse(upperControl.text);
-                                    if (lower != null && upper != null) {
+                                    if (lower != null && upper != null && lower <= upper) {
                                       Navigator.pop(context);
                                       await widget.viewModel.queueLesson.execute((lower, upper));
                                       action();

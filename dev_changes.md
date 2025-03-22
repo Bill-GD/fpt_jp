@@ -1,3 +1,1 @@
-- View Kanji of multiple lessons (all lessons or a specified range)
-- Hides definition when switching and shuffling words
-- Fixed view model notifying listeners even when there's an error
+- Fixed kanji lesson screen still opens when lower bound is higher than upper
