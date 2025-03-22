@@ -19,25 +19,26 @@ class WidgetErrorScreen extends StatelessWidget {
           onPressed: Navigator.of(context).pop,
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(
-              '${e.exception}',
-              style: const TextStyle(fontSize: 24),
-            ),
-          ),
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+      body: Center(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
               child: Text(
-                e.stack.toString(),
-                style: const TextStyle(fontSize: 18),
+                '${e.exception}',
+                style: const TextStyle(fontSize: 24),
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
+                  e.stack.toString(),
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

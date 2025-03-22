@@ -1,5 +1,9 @@
+import 'dart:math';
+
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 
+import '../../../utils/extensions/number_duration.dart';
 import '../../core/styling/text.dart';
 import '../../core/ui/drawer.dart';
 import '../view_model/kanji_view_model.dart';
@@ -14,12 +18,19 @@ class KanjiLessonScreen extends StatefulWidget {
 }
 
 class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
+  late AnimationController flipController;
+
   @override
   void initState() {
     super.initState();
-    widget.viewModel.toggleVisibility.addListener(updateWidget);
+    widget.viewModel.toggleVisibility.addListener(onVisibilityToggled);
     widget.viewModel.loadLesson.addListener(updateWidget);
     widget.viewModel.loadLesson.execute();
+  }
+
+  void onVisibilityToggled() {
+    flipController.reverse().then((_) => flipController.forward());
+    updateWidget();
   }
 
   void updateWidget() {
@@ -28,7 +39,7 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
 
   @override
   void dispose() {
-    widget.viewModel.toggleVisibility.removeListener(updateWidget);
+    widget.viewModel.toggleVisibility.removeListener(onVisibilityToggled);
     widget.viewModel.loadLesson.removeListener(updateWidget);
     widget.viewModel.resetWordIndex.execute();
     super.dispose();
@@ -54,13 +65,14 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
           child: ListenableBuilder(
             listenable: widget.viewModel,
             builder: (context, _) {
-              if (widget.viewModel.loadLesson.running) {
+              if (widget.viewModel.loadLesson.running || widget.viewModel.words.isEmpty) {
                 return const CircularProgressIndicator();
               }
 
               final index = widget.viewModel.currentWordIndex,
                   wordCount = widget.viewModel.words.length,
-                  word = widget.viewModel.words[index];
+                  word = widget.viewModel.words[index],
+                  boxSize = max(MediaQuery.of(context).size.height * 0.75, 400.0);
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -83,7 +95,7 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
                         )),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      constraints: BoxConstraints.loose(const Size(400, 400)),
+                      constraints: BoxConstraints.loose(Size.square(boxSize)),
                       child: Text(
                         widget.viewModel.isWordVisible
                             ? '${word.sinoViet}\n${word.pronunciation}\n${word.meaning}'
@@ -91,6 +103,11 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
                         style: titleTextStyle.copyWith(fontSize: widget.viewModel.isWordVisible ? 24 : 32),
                         textAlign: TextAlign.center,
                       ),
+                    ).flipInX(
+                      duration: 150.ms,
+                      manualTrigger: true,
+                      curve: Curves.bounceInOut,
+                      controller: (p0) => flipController = p0..forward(),
                     ),
                   ),
                   Row(

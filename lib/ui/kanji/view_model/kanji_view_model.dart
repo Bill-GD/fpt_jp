@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../data/repositories/kanji_repository.dart';
@@ -5,6 +7,7 @@ import '../../../domain/models/kanji_lesson.dart';
 import '../../../domain/models/kanji_word.dart';
 import '../../../utils/command/command.dart';
 import '../../../utils/command/result.dart';
+import '../../../utils/extensions/number_duration.dart';
 import '../../../utils/handlers/log_handler.dart';
 import '../../../utils/helpers/helper.dart';
 import '../widgets/add_kanji_screen.dart';
@@ -101,7 +104,10 @@ class KanjiViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _toggleVisibility() async {
-    _isWordVisible = !_isWordVisible;
+    Future.delayed(150.ms, () {
+      _isWordVisible = !_isWordVisible;
+      notifyListeners();
+    });
     return const Result.ok(null);
   }
 

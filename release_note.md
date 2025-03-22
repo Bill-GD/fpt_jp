@@ -4,7 +4,7 @@
 
 ## Changes
 
-- 
+- Added flipping animation to card.
 
 ## Fixes
 
