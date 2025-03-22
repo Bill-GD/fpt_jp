@@ -19,6 +19,7 @@ class KanjiLessonScreen extends StatefulWidget {
 
 class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
   late AnimationController flipController;
+  bool asList = false;
 
   @override
   void initState() {
@@ -49,7 +50,16 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: const [EndDrawerButton()],
+        actions: [
+          Tooltip(
+            message: 'Show as ${asList ? 'card' : 'list'}',
+            child: IconButton(
+              onPressed: () => setState(() => asList = !asList),
+              icon: Icon(asList ? Icons.file_copy : Icons.list),
+            ),
+          ),
+          const EndDrawerButton(),
+        ],
         title: Text(
           widget.viewModel.isMultiLesson
               ? 'Lesson ${widget.viewModel.lessonRange.$1} - ${widget.viewModel.lessonRange.$2}'
@@ -69,8 +79,35 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
                 return const CircularProgressIndicator();
               }
 
+              final wordCount = widget.viewModel.words.length;
+
+              if (asList) {
+                return Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: ListView.builder(
+                    itemCount: wordCount,
+                    itemBuilder: (context, index) {
+                      final word = widget.viewModel.words[index];
+                      return ListTile(
+                        leading: Text(
+                          '${index + 1}',
+                          style: titleTextStyle,
+                        ),
+                        title: Text(
+                          word.word,
+                          style: titleTextStyle.copyWith(fontSize: 32),
+                        ),
+                        subtitle: Text(
+                          '${word.sinoViet} ${word.pronunciation} ${word.meaning}',
+                          style: titleTextStyle.copyWith(fontSize: 24),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+
               final index = widget.viewModel.currentWordIndex,
-                  wordCount = widget.viewModel.words.length,
                   word = widget.viewModel.words[index],
                   boxSize = max(MediaQuery.of(context).size.height * 0.75, 400.0);
 

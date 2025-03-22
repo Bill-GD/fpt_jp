@@ -1,6 +1,6 @@
 ## Features
 
-- 
+- Added new list mode for Kanji lesson.
 
 ## Changes
 
