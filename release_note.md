@@ -1,19 +1,11 @@
 ## Features
 
-- Added a Windows Desktop version.
-- New Kanji words can now be added to lessons.
-- Kanji words can now be shuffled.
-- Can now quickly move to the first or last Kanji word of the lesson.
+- View Kanji of multiple lessons (all lessons or a specified range).
 
 ## Changes
 
-- App's UI now extend to under the status bar.
-- Increased Kanji font size.
-- Version list is now opened from the appropriate side.
+- Hides definition when switching and shuffling words.
 
 ## Fixes
 
-- Fixed not able to view another changelog after viewing once.
-- Fixed a Kanji lesson containing all the Kanji words.
-- Fixed not reconnecting when database disconnects.
-- Fixed drawer rounded corners are on the wrong side.
+- Fixed view model notifying listeners even when there's an error.

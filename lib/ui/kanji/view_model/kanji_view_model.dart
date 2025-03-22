@@ -61,25 +61,29 @@ class KanjiViewModel extends ChangeNotifier {
 
   Future<Result<void>> _loadList() async {
     final result = await _kanjiRepo.getLessonList();
-    if (result is Ok<List<KanjiLesson>>) {
-      _lessons = result.value;
+    switch (result) {
+      case Ok():
+        _lessons = result.value;
+        notifyListeners();
+      case Error():
+        throw result.error;
     }
-    notifyListeners();
     return result;
   }
 
   Future<Result<void>> _queueLesson((int, int) lessonRange) async {
     final (lower, upper) = lessonRange;
+    if (lower > upper) return Result.error(Exception('Starting lesson is higher than ending lesson'));
+
+    _lessonRange = lessonRange;
     if (lower == upper) {
       _currentLessonNum = lower;
       _isMultiLesson = false;
       LogHandler.log('Queued lesson: $lower');
       return const Result.ok(null);
     }
-    if (lower > upper) return Result.error(Exception('Starting lesson is higher than ending lesson'));
 
     _isMultiLesson = true;
-    _lessonRange = lessonRange;
     return const Result.ok(null);
   }
 

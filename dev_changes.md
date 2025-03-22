@@ -1,13 +1,3 @@
-- Fixed not able to set new tag when trying to view a different version note
-- Fixed lessons has all the Kanjis
-- `DatabaseHandler` no longer exposes `MySQLConnection`
-- Fixed not reconnecting when database disconnects
-- Moved `navigatorKey` to `Globals`
-- Can shuffle Kanji words
-- Added buttons to move to first & last Kanji word of the lesson
-- Moved `SafeArea` from `Scaffold`'s parent to its `body`
-- Fixed `MainDrawer` rounded corners are on the wrong side
-- Added button to each lesson in the list, allowing adding new Kanji to them
-- Can add new Kanji lesson, which uses the same `AddKanjiScreen`
-- Version list is now opened from the appropriate side
-- Added Windows version
+- View Kanji of multiple lessons (all lessons or a specified range)
+- Hides definition when switching and shuffling words
+- Fixed view model notifying listeners even when there's an error
