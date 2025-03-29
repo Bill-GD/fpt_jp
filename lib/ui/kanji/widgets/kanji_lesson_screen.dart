@@ -132,7 +132,7 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
                         )),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      constraints: BoxConstraints.loose(Size.square(boxSize)),
+                      constraints: BoxConstraints.tight(Size.square(boxSize)),
                       child: Text(
                         widget.viewModel.isWordVisible
                             ? '${word.sinoViet}\n${word.pronunciation}\n${word.meaning}'
