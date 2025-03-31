@@ -1,8 +1,7 @@
 ## Changes
 
-- Kanji card size is more constrained.
-- Added checkbox to show if a Kanji word will be added.
+- UI will disable editing if Kanji words are being added (high number of words).
 
 ## Fixes
 
-- Fixed empty Kanji word is still added.
+- Fixed mobile Kanji card not being a square.

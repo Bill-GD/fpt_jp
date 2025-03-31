@@ -109,7 +109,10 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
 
               final index = widget.viewModel.currentWordIndex,
                   word = widget.viewModel.words[index],
-                  boxSize = max(MediaQuery.of(context).size.height * 0.75, 400.0);
+                  boxSize = max(
+                    min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.75,
+                    400.0,
+                  );
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -132,7 +135,7 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
                         )),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      constraints: BoxConstraints.tight(Size.square(boxSize)),
+                      constraints: BoxConstraints.loose(Size.square(boxSize)),
                       child: Text(
                         widget.viewModel.isWordVisible
                             ? '${word.sinoViet}\n${word.pronunciation}\n${word.meaning}'

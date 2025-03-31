@@ -1,3 +1,2 @@
-- Kanji card size is tightly constrained
-- Fixed empty Kanji word is still added
-- Added checkbox to show if the word will be accepted/inserted. Rewrote `TextEditingController`s for this
+- Disables editing if words are being inserted (high number)
+- Fixed Kanji card not being a square (checks for shortest screen side)
