@@ -15,6 +15,52 @@ class AddKanjiScreen extends StatefulWidget {
 }
 
 class _AddKanjiScreenState extends State<AddKanjiScreen> {
+  late List<TextEditingController> wordControllers;
+  late List<TextEditingController> pronunciationControllers;
+  late List<TextEditingController> sinoVietControllers;
+  late List<TextEditingController> meaningControllers;
+
+  @override
+  void initState() {
+    super.initState();
+    updateControllers();
+    widget.viewModel.addNewWord.addListener(updateControllers);
+  }
+
+  @override
+  void didUpdateWidget(covariant AddKanjiScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    updateControllers();
+    widget.viewModel.addNewWord.removeListener(updateControllers);
+    widget.viewModel.addNewWord.addListener(updateControllers);
+  }
+
+  void updateControllers() {
+    final wordList = widget.viewModel.words;
+    wordControllers = wordList.map((word) => TextEditingController(text: word.word)).toList();
+    pronunciationControllers = wordList.map((word) => TextEditingController(text: word.pronunciation)).toList();
+    sinoVietControllers = wordList.map((word) => TextEditingController(text: word.sinoViet)).toList();
+    meaningControllers = wordList.map((word) => TextEditingController(text: word.meaning)).toList();
+  }
+
+  @override
+  void dispose() {
+    widget.viewModel.addNewWord.removeListener(updateControllers);
+    for (var controller in wordControllers) {
+      controller.dispose();
+    }
+    for (var controller in pronunciationControllers) {
+      controller.dispose();
+    }
+    for (var controller in sinoVietControllers) {
+      controller.dispose();
+    }
+    for (var controller in meaningControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,9 +113,16 @@ class _AddKanjiScreenState extends State<AddKanjiScreen> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(right: 20, left: 8),
-                              child: Text(
-                                '${index + 1}',
-                                style: titleTextStyle,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '${index + 1}',
+                                    style: titleTextStyle,
+                                  ),
+                                  Icon(word.isEmpty ? Icons.check_box_outline_blank_rounded : Icons.check_box_rounded),
+                                ],
                               ),
                             ),
                             Flexible(
@@ -77,7 +130,7 @@ class _AddKanjiScreenState extends State<AddKanjiScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   TextField(
-                                    controller: TextEditingController(text: word.word),
+                                    controller: wordControllers[index],
                                     onChanged: (val) => widget.viewModel.updateWord.execute((
                                       index,
                                       WordUpdateType.word,
@@ -93,7 +146,7 @@ class _AddKanjiScreenState extends State<AddKanjiScreen> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 12),
                                     child: TextField(
-                                      controller: TextEditingController(text: word.pronunciation),
+                                      controller: pronunciationControllers[index],
                                       onChanged: (val) => widget.viewModel.updateWord.execute((
                                         index,
                                         WordUpdateType.pronun,
@@ -110,7 +163,7 @@ class _AddKanjiScreenState extends State<AddKanjiScreen> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 12),
                                     child: TextField(
-                                      controller: TextEditingController(text: word.sinoViet),
+                                      controller: sinoVietControllers[index],
                                       onChanged: (val) => widget.viewModel.updateWord.execute((
                                         index,
                                         WordUpdateType.sino,
@@ -127,7 +180,7 @@ class _AddKanjiScreenState extends State<AddKanjiScreen> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 12),
                                     child: TextField(
-                                      controller: TextEditingController(text: word.meaning),
+                                      controller: meaningControllers[index],
                                       onChanged: (val) => widget.viewModel.updateWord.execute((
                                         index,
                                         WordUpdateType.meaning,

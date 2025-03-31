@@ -37,6 +37,8 @@ class KanjiRepository {
         'values (:lesson_num, :word, :pronunciation, :sino_viet, :meaning)');
 
     for (final i in range(0, words.length - 1)) {
+      if (words[i].isEmpty) continue;
+
       await DatabaseHandler.execute(
         queries.elementAt(i),
         {

@@ -72,6 +72,7 @@ class AddKanjiViewModel extends ChangeNotifier {
       case WordUpdateType.sino:
         _words[index].sinoViet = value;
     }
+    notifyListeners();
     return const Result.ok(null);
   }
 

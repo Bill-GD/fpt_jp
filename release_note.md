@@ -1,11 +1,8 @@
-## Features
-
-- Added new list mode for Kanji lesson.
-
 ## Changes
 
-- Added flipping animation to card.
+- Kanji card size is more constrained.
+- Added checkbox to show if a Kanji word will be added.
 
 ## Fixes
 
-- Fixed able to view Kanji lesson when `from` is higher than `to`.
+- Fixed empty Kanji word is still added.

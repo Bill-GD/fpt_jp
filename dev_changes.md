@@ -1,4 +1,3 @@
-- Fixed kanji lesson screen still opens when lower bound is higher than upper
-- Fixed widget error overflow
-- Card flips when toggling word meaning
-- Added list mode for Kanji
+- Kanji card size is tightly constrained
+- Fixed empty Kanji word is still added
+- Added checkbox to show if the word will be accepted/inserted. Rewrote `TextEditingController`s for this
