@@ -1,2 +1,1 @@
-- Disables editing if words are being inserted (high number)
-- Fixed Kanji card not being a square (checks for shortest screen side)
+- Fixed input disabled when adding new word
