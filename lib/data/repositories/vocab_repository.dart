@@ -13,6 +13,19 @@ class VocabRepository {
     return words.toList();
   }
 
+  Future<List<Vocab>> getWordRange(int from, int to) async {
+    final result = await DatabaseHandler.execute(
+      'select * from vocab where id between :from and :to',
+      {'from': from, 'to': to},
+    );
+    final words = result.rows.map((e) => e.assoc()).map((e) => Vocab(
+          id: int.parse(e['id']!),
+          word: e['word']!,
+          meaning: e['meaning']!,
+        ));
+    return words.toList();
+  }
+
   Future<List<VocabExtra>> getExtrasOf(int wordId) async {
     final result = await DatabaseHandler.execute(
       'select content, meaning from vocab_extra where vocab_id = :vocab_id',

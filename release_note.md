@@ -1,6 +1,7 @@
 ## Features
 
 - Added new Vocab screen: view main vocabularies and their extras vocabularies.
+- A selected range of vocabularies can be filtered.
 
 ## Fixes
 
