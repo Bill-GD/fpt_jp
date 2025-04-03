@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../data/repositories/about_repository.dart';
 import '../../../data/repositories/kanji_repository.dart';
+import '../../../data/repositories/vocab_repository.dart';
 import '../../../utils/command/command.dart';
 import '../../../utils/command/result.dart';
 import '../../../utils/handlers/log_handler.dart';
@@ -9,6 +10,7 @@ import '../../../utils/helpers/globals.dart';
 import '../../../utils/helpers/helper.dart';
 import '../../kanji/view_model/kanji_view_model.dart';
 import '../../kanji/widgets/kanji_lesson_list_screen.dart';
+import '../../vocab/widgets/vocab_screen.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final AboutRepository _aboutRepo;
@@ -63,6 +65,23 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _openVocabScreen() async {
+    Navigator.push(
+      getGlobalContext(),
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) {
+          return VocabScreen(vocabRepo: VocabRepository());
+        },
+        transitionsBuilder: (context, anim1, _, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 1),
+              end: const Offset(0, 0),
+            ).animate(anim1.drive(CurveTween(curve: Curves.decelerate))),
+            child: child,
+          );
+        },
+      ),
+    );
     return const Result.ok(null);
   }
 

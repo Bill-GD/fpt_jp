@@ -23,6 +23,7 @@ class _AddKanjiScreenState extends State<AddKanjiScreen> {
     super.initState();
     updateControllers();
     widget.viewModel.addNewWord.addListener(updateControllers);
+    widget.viewModel.removeWord.addListener(updateControllers);
   }
 
   @override
@@ -31,6 +32,8 @@ class _AddKanjiScreenState extends State<AddKanjiScreen> {
     updateControllers();
     widget.viewModel.addNewWord.removeListener(updateControllers);
     widget.viewModel.addNewWord.addListener(updateControllers);
+    widget.viewModel.removeWord.removeListener(updateControllers);
+    widget.viewModel.removeWord.addListener(updateControllers);
   }
 
   void updateControllers() {
@@ -207,7 +210,11 @@ class _AddKanjiScreenState extends State<AddKanjiScreen> {
                             Padding(
                               padding: const EdgeInsets.only(left: 8),
                               child: IconButton(
-                                onPressed: wordCount <= 1 ? null : () => widget.viewModel.removeWord.execute(index),
+                                onPressed: wordCount <= 1 || isInserting
+                                    ? null
+                                    : () {
+                                        widget.viewModel.removeWord.execute(index);
+                                      },
                                 icon: const Icon(Icons.delete_forever_rounded),
                               ),
                             ),

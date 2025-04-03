@@ -10,22 +10,15 @@ create table if not exists kanji_word (
 );
 
 create table if not exists vocab (
-  id      int primary key,
-  word    nvarchar(20)  not null,
-  meaning nvarchar(255) not null
+  id         int primary key,
+  word       nvarchar(20)  not null,
+  meaning    nvarchar(255) not null
 );
 
 create table if not exists vocab_extra (
-  id       int primary key,
+  id       int primary key auto_increment,
   vocab_id int           not null,
   content  nvarchar(50)  not null,
   meaning  nvarchar(255) not null,
-  foreign key (vocab_id) references vocab (id)
-);
-
-create table if not exists vocab_particle (
-  id       int primary key,
-  vocab_id int           not null,
-  `usage`  nvarchar(255) not null,
   foreign key (vocab_id) references vocab (id)
 );

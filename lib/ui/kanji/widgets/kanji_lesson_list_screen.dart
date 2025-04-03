@@ -48,9 +48,7 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
             message: 'Refresh the list',
             child: IconButton(
               icon: const Icon(Icons.refresh_rounded),
-              onPressed: () async {
-                widget.viewModel.loadList.execute();
-              },
+              onPressed: widget.viewModel.loadList.execute,
             ),
           ),
           const EndDrawerButton(),

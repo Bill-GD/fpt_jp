@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import '../../../utils/helpers/helper.dart';
 
 const TextStyle titleTextStyle = TextStyle(
-  fontSize: 18,
+  fontSize: 20,
   fontWeight: FontWeight.w700,
 );
 
 const TextStyle bodyTextStyle = TextStyle(
-  fontSize: 14,
+  fontSize: 16,
   fontWeight: FontWeight.w600,
 );
 

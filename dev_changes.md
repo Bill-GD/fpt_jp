@@ -1,1 +1,3 @@
-- Fixed input disabled when adding new word
+- Disables deleting word when inserting new words
+- Fixed not deleting the correct words
+- Added vocab screen: view words and its extra vocabularies
