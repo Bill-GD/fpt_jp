@@ -1,7 +1,11 @@
 ## Features
 
 - Added new Vocab screen: view main vocabularies and their extras vocabularies.
-- A selected range of vocabularies can be filtered.
+- A range of vocabularies can be selected.
+
+## Changes
+
+- Kanji lessons are ordered by lesson number.
 
 ## Fixes
 

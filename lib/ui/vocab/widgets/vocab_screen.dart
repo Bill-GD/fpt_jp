@@ -3,7 +3,6 @@ import 'package:fpt_jp/utils/extensions/number_duration.dart';
 
 import '../../../data/repositories/vocab_repository.dart';
 import '../../../domain/models/vocab.dart';
-import '../../../domain/models/vocab_extra.dart';
 import '../../../utils/extensions/list.dart';
 import '../../../utils/handlers/log_handler.dart';
 import '../../core/styling/text.dart';
@@ -21,7 +20,6 @@ class VocabScreen extends StatefulWidget {
 
 class _VocabScreenState extends State<VocabScreen> {
   List<Vocab> words = [];
-  List<VocabExtra> extras = [];
   List<bool> isOpen = [];
   int currentlyOpened = -1;
   bool isLoadingWords = true;
@@ -34,6 +32,7 @@ class _VocabScreenState extends State<VocabScreen> {
 
   Future<void> updateWords([int from = -1, int to = -1]) async {
     setState(() => isLoadingWords = true);
+    currentlyOpened = -1;
     words = from < 0 || to < 0 ? await widget.vocabRepo.getAllWords() : await widget.vocabRepo.getWordRange(from, to);
     isOpen = List<bool>.filled(words.length, false);
     LogHandler.log('Got ${words.length} vocab words');
@@ -102,7 +101,7 @@ class _VocabScreenState extends State<VocabScreen> {
                         final lower = int.tryParse(lowerControl.text), upper = int.tryParse(upperControl.text);
                         if (lower != null && upper != null && lower <= upper) {
                           await updateWords(lower, upper);
-                          Navigator.pop(context);
+                          if (context.mounted) Navigator.pop(context);
                         }
                       },
                       child: const Text('Learn'),
@@ -123,7 +122,7 @@ class _VocabScreenState extends State<VocabScreen> {
               child: ExpansionPanelList(
                 expansionCallback: (index, isExpanded) async {
                   if (currentlyOpened >= 0) isOpen[currentlyOpened] = false;
-                  extras = await widget.vocabRepo.getExtrasOf(words[index].id);
+                  words[index].extras = await widget.vocabRepo.getExtrasOf(words[index].id);
                   isOpen[index] = isExpanded;
                   currentlyOpened = index;
                   setState(() {});
@@ -145,21 +144,30 @@ class _VocabScreenState extends State<VocabScreen> {
                         ),
                       );
                     },
-                    body: extras.isEmpty
+                    body: word.extras.isEmpty
                         ? const Text(
                             'No extra vocabulary',
                             style: bodyTextStyle,
                           )
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.start,
-                            children: extras.map((e) {
-                              return ListTile(
-                                title: Text(
-                                  '${e.content} ${e.meaning}',
-                                  style: titleTextStyle,
-                                ),
-                              );
-                            }).toList(),
+                            children: [
+                              ...word.extras.mapIndexed((i, e) {
+                                return ListTile(
+                                  leading: Text(
+                                    i == word.extras.length - 1 ? '└' : '├',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    '${e.content} ${e.meaning}',
+                                    style: titleTextStyle,
+                                  ),
+                                );
+                              })
+                            ],
                           ),
                   );
                 }),

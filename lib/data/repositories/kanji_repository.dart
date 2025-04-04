@@ -7,7 +7,7 @@ import '../../utils/helpers/helper.dart';
 class KanjiRepository {
   Future<Result<List<KanjiLesson>>> getLessonList() async {
     final result = await DatabaseHandler.execute(
-      'select lesson_num, count(id) count from kanji_word group by lesson_num',
+      'select lesson_num, count(id) count from kanji_word group by lesson_num order by lesson_num asc',
     );
     final lessons = result.rows.map((e) => e.assoc()).map((e) => KanjiLesson(
           lessonNum: int.parse(e['lesson_num']!),

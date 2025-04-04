@@ -2,3 +2,6 @@
 - Fixed not deleting the correct words
 - Added vocab screen: view words and its extra vocabularies
 - Added vocab filter: get vocab within a range
+- Kanji lessons are ordered by lesson number, vocab are ordered by number
+- Extra vocabs are prefixed with ascii list icons
+- Extra vocabs are stored in the corresponding vocab

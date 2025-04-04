@@ -4,7 +4,7 @@ class Vocab {
   final int id;
   final String word;
   final String meaning;
-  final List<VocabExtra> extras = const [];
+  List<VocabExtra> extras = [];
 
-  const Vocab({required this.id, required this.word, required this.meaning});
+  Vocab({required this.id, required this.word, required this.meaning});
 }
