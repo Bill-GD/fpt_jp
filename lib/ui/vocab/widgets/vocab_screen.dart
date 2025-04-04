@@ -152,15 +152,9 @@ class _VocabScreenState extends State<VocabScreen> {
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              ...word.extras.mapIndexed((i, e) {
+                              ...word.extras.map((e) {
                                 return ListTile(
-                                  leading: Text(
-                                    i == word.extras.length - 1 ? '└' : '├',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                  ),
+                                  leading: const Icon(Icons.arrow_right_alt_rounded),
                                   title: Text(
                                     '${e.content} ${e.meaning}',
                                     style: titleTextStyle,
