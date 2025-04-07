@@ -2,6 +2,7 @@
 
 - Added new Vocab screen: view main vocabularies and their extras vocabularies.
 - A range of vocabularies can be selected.
+- Vocab can be added one by one.
 
 ## Changes
 

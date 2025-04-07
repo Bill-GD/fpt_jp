@@ -4,3 +4,5 @@
 - Sino for Kanjis are forced to be upper case when adding to database
 - Vocabs are paginated (50 per page)
 - Lesson control buttons moved to bottom navigation bar
+- New vocab can be added (one at a time)
+- Rewritten database insertion logic to use 1 query only

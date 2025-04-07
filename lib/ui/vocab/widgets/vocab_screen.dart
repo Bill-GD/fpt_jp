@@ -177,6 +177,7 @@ class _VocabScreenState extends State<VocabScreen> {
         decoration: BoxDecoration(
           border: BorderDirectional(top: BorderSide(color: Theme.of(context).colorScheme.onSurface)),
         ),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -219,6 +220,84 @@ class _VocabScreenState extends State<VocabScreen> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Add word',
+        onPressed: () async {
+          final numberControl = TextEditingController(),
+              wordControl = TextEditingController(),
+              meaningControl = TextEditingController();
+
+          await ActionDialog.static(
+            context,
+            title: 'Add new word',
+            titleFontSize: 18,
+            widgetContent: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: numberControl,
+                  keyboardType: TextInputType.number,
+                  decoration: textFieldDecoration(
+                    fillColor: Theme.of(context).colorScheme.surface,
+                    border: const OutlineInputBorder(),
+                    labelText: 'Word number',
+                    hintText: '100',
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: TextField(
+                    controller: wordControl,
+                    keyboardType: TextInputType.text,
+                    decoration: textFieldDecoration(
+                      fillColor: Theme.of(context).colorScheme.surface,
+                      border: const OutlineInputBorder(),
+                      labelText: 'Word',
+                      hintText: 'としうえ',
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: TextField(
+                    controller: meaningControl,
+                    keyboardType: TextInputType.text,
+                    decoration: textFieldDecoration(
+                      fillColor: Theme.of(context).colorScheme.surface,
+                      border: const OutlineInputBorder(),
+                      labelText: 'Meaning',
+                      hintText: 'người hơn tuổi',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            contentFontSize: 14,
+            time: 200.ms,
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  final newId = int.tryParse(numberControl.text);
+                  if (newId == null) {
+                    return;
+                  }
+
+                  final newWord = Vocab(
+                    id: newId,
+                    word: wordControl.text,
+                    meaning: meaningControl.text,
+                  );
+                  await widget.vocabRepo.insertVocab([newWord]);
+                  if (context.mounted) Navigator.pop(context);
+                },
+                child: const Text('Add'),
+              ),
+            ],
+          );
+          await updateWords();
+        },
+        child: const Icon(Icons.add_rounded),
       ),
     );
   }

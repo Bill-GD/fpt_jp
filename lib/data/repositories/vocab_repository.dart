@@ -28,15 +28,19 @@ class VocabRepository {
 
   Future<List<VocabExtra>> getExtrasOf(int wordId) async {
     final result = await DatabaseHandler.execute(
-      'select content, meaning from vocab_extra where vocab_id = :vocab_id',
-      {'vocab_id': wordId},
-    );
-
-    final extras = result.rows.map((e) => e.assoc()).map((e) => VocabExtra(
-          content: e['content']!,
-          meaning: e['meaning']!,
-        ));
-
+          'select content, meaning from vocab_extra where vocab_id = :vocab_id',
+          {'vocab_id': wordId},
+        ),
+        extras = result.rows.map((e) => e.assoc()).map((e) => VocabExtra(
+              content: e['content']!,
+              meaning: e['meaning']!,
+            ));
     return extras.toList();
+  }
+
+  Future<void> insertVocab(List<Vocab> words) async {
+    String query = 'insert into vocab (id, word, meaning) values ';
+    final wordInserts = words.map((e) => ' (${e.id}, ${e.word}, ${e.meaning})');
+    await DatabaseHandler.execute(query + wordInserts.join(','));
   }
 }

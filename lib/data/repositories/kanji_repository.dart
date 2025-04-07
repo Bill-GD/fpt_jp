@@ -2,7 +2,6 @@ import '../../domain/models/kanji_lesson.dart';
 import '../../domain/models/kanji_word.dart';
 import '../../utils/command/result.dart';
 import '../../utils/handlers/database_handler.dart';
-import '../../utils/helpers/helper.dart';
 
 class KanjiRepository {
   Future<Result<List<KanjiLesson>>> getLessonList() async {
@@ -33,23 +32,12 @@ class KanjiRepository {
   }
 
   Future<Result<void>> insertKanji(List<KanjiWord> words) async {
-    final queries = words.map((e) => 'insert into kanji_word (lesson_num, word, pronunciation, sino_viet, meaning) '
-        'values (:lesson_num, :word, :pronunciation, :sino_viet, :meaning)');
+    String query = 'insert into kanji_word (lesson_num, word, pronunciation, sino_viet, meaning) values ';
+    final wordInserts = words
+        .where((e) => !e.isEmpty)
+        .map((e) => '(${e.lessonNum}, ${e.word}, ${e.pronunciation}, ${e.sinoViet}, ${e.meaning})');
 
-    for (final i in range(0, words.length - 1)) {
-      if (words[i].isEmpty) continue;
-
-      await DatabaseHandler.execute(
-        queries.elementAt(i),
-        {
-          'lesson_num': words[i].lessonNum,
-          'word': words[i].word.trim(),
-          'pronunciation': words[i].pronunciation.trim(),
-          'sino_viet': words[i].sinoViet.trim().toUpperCase(),
-          'meaning': words[i].meaning.trim(),
-        },
-      );
-    }
+    await DatabaseHandler.execute(query + wordInserts.join(','));
     return const Result.ok(null);
   }
 }
