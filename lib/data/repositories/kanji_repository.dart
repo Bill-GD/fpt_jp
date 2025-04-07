@@ -45,7 +45,7 @@ class KanjiRepository {
           'lesson_num': words[i].lessonNum,
           'word': words[i].word.trim(),
           'pronunciation': words[i].pronunciation.trim(),
-          'sino_viet': words[i].sinoViet.trim(),
+          'sino_viet': words[i].sinoViet.trim().toUpperCase(),
           'meaning': words[i].meaning.trim(),
         },
       );
