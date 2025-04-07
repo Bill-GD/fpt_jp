@@ -50,6 +50,7 @@ bool isVersionNewer(String remoteVer) {
   if (remote['patch'] != local['patch']) {
     return remote['patch'] > local['patch'];
   }
+  if (local['isDev'] && !remote['isDev']) return true;
   if (remote['isDev'] && local['isDev'] && remote['devBuild'] > local['devBuild']) return true;
   return false;
 }
