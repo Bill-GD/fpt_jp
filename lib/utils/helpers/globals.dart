@@ -13,4 +13,6 @@ class Globals {
   static final isDev = Globals.appVersion.contains('_dev_');
 
   static String newestVersion = '';
+
+  static const pageLimit = 50;
 }

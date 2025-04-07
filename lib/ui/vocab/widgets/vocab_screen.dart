@@ -21,7 +21,7 @@ class VocabScreen extends StatefulWidget {
 class _VocabScreenState extends State<VocabScreen> {
   List<Vocab> words = [];
   List<bool> isOpen = [];
-  int currentlyOpened = -1;
+  int currentlyOpened = -1, currentPage = 1, pageCount = 0, lowerBound = -1, upperBound = -1;
   bool isLoadingWords = true;
 
   @override
@@ -30,10 +30,11 @@ class _VocabScreenState extends State<VocabScreen> {
     updateWords();
   }
 
-  Future<void> updateWords([int from = -1, int to = -1]) async {
+  Future<void> updateWords() async {
     setState(() => isLoadingWords = true);
     currentlyOpened = -1;
-    words = from < 0 || to < 0 ? await widget.vocabRepo.getAllWords() : await widget.vocabRepo.getWordRange(from, to);
+    pageCount = await widget.vocabRepo.getPageCount(lowerBound, upperBound);
+    words = await widget.vocabRepo.getWords(lowerBound, upperBound, currentPage);
     isOpen = List<bool>.filled(words.length, false);
     LogHandler.log('Got ${words.length} vocab words');
     setState(() => isLoadingWords = false);
@@ -50,6 +51,8 @@ class _VocabScreenState extends State<VocabScreen> {
             message: 'Clear filter',
             child: IconButton(
               onPressed: () async {
+                lowerBound = upperBound = -1;
+                currentPage = 1;
                 await updateWords();
               },
               icon: const Icon(Icons.filter_alt_off_rounded),
@@ -100,7 +103,10 @@ class _VocabScreenState extends State<VocabScreen> {
                       onPressed: () async {
                         final lower = int.tryParse(lowerControl.text), upper = int.tryParse(upperControl.text);
                         if (lower != null && upper != null && lower <= upper) {
-                          await updateWords(lower, upper);
+                          lowerBound = lower;
+                          upperBound = upper;
+                          currentPage = 1;
+                          await updateWords();
                           if (context.mounted) Navigator.pop(context);
                         }
                       },
@@ -167,6 +173,53 @@ class _VocabScreenState extends State<VocabScreen> {
                 }),
               ),
             ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: BorderDirectional(top: BorderSide(color: Theme.of(context).colorScheme.onSurface)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.keyboard_double_arrow_left_rounded),
+              onPressed: currentPage <= 1
+                  ? null
+                  : () async {
+                      currentPage = 1;
+                      await updateWords();
+                    },
+            ),
+            IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              onPressed: currentPage <= 1
+                  ? null
+                  : () async {
+                      currentPage--;
+                      await updateWords();
+                    },
+            ),
+            if (isLoadingWords) const CircularProgressIndicator() else Text('Page $currentPage / $pageCount'),
+            IconButton(
+              icon: const Icon(Icons.arrow_forward_ios_rounded),
+              onPressed: currentPage >= pageCount
+                  ? null
+                  : () async {
+                      currentPage++;
+                      await updateWords();
+                    },
+            ),
+            IconButton(
+              icon: const Icon(Icons.keyboard_double_arrow_right_rounded),
+              onPressed: currentPage >= pageCount
+                  ? null
+                  : () async {
+                      currentPage = 1;
+                      await updateWords();
+                    },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

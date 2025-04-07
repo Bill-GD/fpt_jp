@@ -6,8 +6,9 @@
 ## Changes
 
 - Kanji lessons are ordered by lesson number.
+- Updated Kanji UI to match Vocabulary UI.
 
 ## Fixes
 
 - Fixed not all interaction disabled when adding words.
-- Fixed not deleting the correct words.
+- Fixed not deleting the correct Kanji words.

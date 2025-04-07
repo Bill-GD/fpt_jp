@@ -1,4 +1,6 @@
 - Kanji lessons are ordered by lesson number, vocab are ordered by number
 - Extra vocabs are prefixed with icon
 - Extra vocabs are stored in the corresponding vocab
-- Sino for Kanjis are forced to be upper case when adding o database
+- Sino for Kanjis are forced to be upper case when adding to database
+- Vocabs are paginated (50 per page)
+- Lesson control buttons moved to bottom navigation bar
