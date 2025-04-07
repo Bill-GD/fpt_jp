@@ -4,7 +4,6 @@ import 'package:fpt_jp/utils/extensions/number_duration.dart';
 import '../../../data/repositories/vocab_repository.dart';
 import '../../../domain/models/vocab.dart';
 import '../../../utils/extensions/list.dart';
-import '../../../utils/handlers/log_handler.dart';
 import '../../core/styling/text.dart';
 import '../../core/ui/action_dialog.dart';
 import '../../core/ui/drawer.dart';
@@ -36,7 +35,6 @@ class _VocabScreenState extends State<VocabScreen> {
     pageCount = await widget.vocabRepo.getPageCount(lowerBound, upperBound);
     words = await widget.vocabRepo.getWords(lowerBound, upperBound, currentPage);
     isOpen = List<bool>.filled(words.length, false);
-    LogHandler.log('Got ${words.length} vocab words');
     setState(() => isLoadingWords = false);
   }
 
@@ -228,7 +226,7 @@ class _VocabScreenState extends State<VocabScreen> {
               wordControl = TextEditingController(),
               meaningControl = TextEditingController();
 
-          await ActionDialog.static(
+          final added = await ActionDialog.static<bool>(
             context,
             title: 'Add new word',
             titleFontSize: 18,
@@ -289,13 +287,13 @@ class _VocabScreenState extends State<VocabScreen> {
                     meaning: meaningControl.text,
                   );
                   await widget.vocabRepo.insertVocab([newWord]);
-                  if (context.mounted) Navigator.pop(context);
+                  if (context.mounted) Navigator.pop(context, true);
                 },
                 child: const Text('Add'),
               ),
             ],
           );
-          await updateWords();
+          if (added == true) await updateWords();
         },
         child: const Icon(Icons.add_rounded),
       ),

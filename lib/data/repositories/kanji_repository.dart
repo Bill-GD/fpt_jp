@@ -1,3 +1,5 @@
+import 'package:fpt_jp/utils/handlers/log_handler.dart';
+
 import '../../domain/models/kanji_lesson.dart';
 import '../../domain/models/kanji_word.dart';
 import '../../utils/command/result.dart';
@@ -12,6 +14,7 @@ class KanjiRepository {
           lessonNum: int.parse(e['lesson_num']!),
           wordCount: int.parse(e['count']!),
         ));
+    LogHandler.log('Got ${lessons.length} kanji lessons');
     return Result.ok(lessons.toList());
   }
 
@@ -28,6 +31,7 @@ class KanjiRepository {
           sinoViet: e['sino_viet']!,
           meaning: e['meaning']!,
         ));
+    LogHandler.log('Got ${words.length} kanjis');
     return Result.ok(words.toList());
   }
 
@@ -38,6 +42,7 @@ class KanjiRepository {
         .map((e) => '(${e.lessonNum}, ${e.word}, ${e.pronunciation}, ${e.sinoViet}, ${e.meaning})');
 
     await DatabaseHandler.execute(query + wordInserts.join(','));
+    LogHandler.log('Inserted ${words.length} new kanjis');
     return const Result.ok(null);
   }
 }

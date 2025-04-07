@@ -1,6 +1,7 @@
 import '../../domain/models/vocab.dart';
 import '../../domain/models/vocab_extra.dart';
 import '../../utils/handlers/database_handler.dart';
+import '../../utils/handlers/log_handler.dart';
 import '../../utils/helpers/globals.dart';
 
 class VocabRepository {
@@ -23,6 +24,7 @@ class VocabRepository {
               word: e['word']!,
               meaning: e['meaning']!,
             ));
+    LogHandler.log('Got ${words.length} vocab words (${from > 0 && to > 0 ? 'filter=$from-$to, ' : ''}page=$page)');
     return words.toList();
   }
 
@@ -35,6 +37,7 @@ class VocabRepository {
               content: e['content']!,
               meaning: e['meaning']!,
             ));
+    LogHandler.log('Got ${extras.length} extra vocabs of vocab id=$wordId');
     return extras.toList();
   }
 
@@ -42,5 +45,6 @@ class VocabRepository {
     String query = 'insert into vocab (id, word, meaning) values ';
     final wordInserts = words.map((e) => ' (${e.id}, ${e.word}, ${e.meaning})');
     await DatabaseHandler.execute(query + wordInserts.join(','));
+    LogHandler.log('Inserted ${words.length} new vocabs');
   }
 }

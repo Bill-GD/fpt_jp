@@ -2,7 +2,6 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utils/extensions/number_duration.dart';
-import '../../../utils/handlers/log_handler.dart';
 import '../../core/styling/text.dart';
 import '../../core/ui/action_dialog.dart';
 import '../../core/ui/drawer.dart';
@@ -33,9 +32,6 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
   }
 
   void onLoad() {
-    if (!widget.viewModel.loadList.running) {
-      LogHandler.log('Got ${widget.viewModel.lessons.length} kanji lessons');
-    }
     setState(() {});
   }
 

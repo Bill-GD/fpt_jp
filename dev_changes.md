@@ -6,3 +6,4 @@
 - Lesson control buttons moved to bottom navigation bar
 - New vocab can be added (one at a time)
 - Rewritten database insertion logic to use 1 query only
+- Adjusted some log messages

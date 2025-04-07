@@ -82,10 +82,11 @@ class KanjiViewModel extends ChangeNotifier {
     if (lower == upper) {
       _currentLessonNum = lower;
       _isMultiLesson = false;
-      LogHandler.log('Queued lesson: $lower');
+      LogHandler.log(lower == 0 ? 'Queued all lessons' : 'Queued lesson: $lower');
       return const Result.ok(null);
     }
 
+    LogHandler.log('Queued lessons: $lower - $upper');
     _isMultiLesson = true;
     return const Result.ok(null);
   }
@@ -96,7 +97,6 @@ class KanjiViewModel extends ChangeNotifier {
       case Ok<List<KanjiWord>>():
         _words = result.value;
         _isWordVisible = false;
-        LogHandler.log('Got ${_words.length} words');
       case Error<List<KanjiWord>>():
         throw result.error;
     }
