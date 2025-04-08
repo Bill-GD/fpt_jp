@@ -1,1 +1,2 @@
 - Fixed dev versions of are considered newer than stable version.
+- Fixed SQL syntax error (strings didn't use quotes)

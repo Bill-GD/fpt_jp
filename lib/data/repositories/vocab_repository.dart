@@ -43,7 +43,7 @@ class VocabRepository {
 
   Future<void> insertVocab(List<Vocab> words) async {
     String query = 'insert into vocab (id, word, meaning) values ';
-    final wordInserts = words.map((e) => ' (${e.id}, ${e.word}, ${e.meaning})');
+    final wordInserts = words.map((e) => "('${e.id}', '${e.word}', '${e.meaning}')");
     await DatabaseHandler.execute(query + wordInserts.join(','));
     LogHandler.log('Inserted ${words.length} new vocabs');
   }

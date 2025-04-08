@@ -39,7 +39,7 @@ class KanjiRepository {
     String query = 'insert into kanji_word (lesson_num, word, pronunciation, sino_viet, meaning) values ';
     final wordInserts = words
         .where((e) => !e.isEmpty)
-        .map((e) => '(${e.lessonNum}, ${e.word}, ${e.pronunciation}, ${e.sinoViet}, ${e.meaning})');
+        .map((e) => "('${e.lessonNum}', '${e.word}', '${e.pronunciation}', '${e.sinoViet}', '${e.meaning}')");
 
     await DatabaseHandler.execute(query + wordInserts.join(','));
     LogHandler.log('Inserted ${words.length} new kanjis');
