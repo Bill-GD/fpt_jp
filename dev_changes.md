@@ -1,2 +1,1 @@
-- Fixed dev versions of are considered newer than stable version.
-- Fixed SQL syntax error (strings didn't use quotes)
+- Kanji sino will be forced uppercase before inserting

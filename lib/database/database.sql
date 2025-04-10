@@ -10,9 +10,9 @@ create table if not exists kanji_word (
 );
 
 create table if not exists vocab (
-  id         int primary key,
-  word       nvarchar(20)  not null,
-  meaning    nvarchar(255) not null
+  id      int primary key,
+  word    nvarchar(20)  not null,
+  meaning nvarchar(255) not null
 );
 
 create table if not exists vocab_extra (

@@ -1,9 +1,8 @@
-import 'package:fpt_jp/utils/handlers/log_handler.dart';
-
 import '../../domain/models/kanji_lesson.dart';
 import '../../domain/models/kanji_word.dart';
 import '../../utils/command/result.dart';
 import '../../utils/handlers/database_handler.dart';
+import '../../utils/handlers/log_handler.dart';
 
 class KanjiRepository {
   Future<Result<List<KanjiLesson>>> getLessonList() async {
@@ -37,9 +36,8 @@ class KanjiRepository {
 
   Future<Result<void>> insertKanji(List<KanjiWord> words) async {
     String query = 'insert into kanji_word (lesson_num, word, pronunciation, sino_viet, meaning) values ';
-    final wordInserts = words
-        .where((e) => !e.isEmpty)
-        .map((e) => "('${e.lessonNum}', '${e.word}', '${e.pronunciation}', '${e.sinoViet}', '${e.meaning}')");
+    final wordInserts = words.where((e) => !e.isEmpty).map(
+        (e) => "('${e.lessonNum}', '${e.word}', '${e.pronunciation}', '${e.sinoViet.toUpperCase()}', '${e.meaning}')");
 
     await DatabaseHandler.execute(query + wordInserts.join(','));
     LogHandler.log('Inserted ${words.length} new kanjis');
