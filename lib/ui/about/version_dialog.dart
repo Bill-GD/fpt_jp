@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../utils/handlers/log_handler.dart';
-import '../view_model/version_view_model.dart';
 
 class VersionDialog extends StatefulWidget {
-  final VersionViewModel viewModel;
+  final String tag;
+  final String body;
+  final String timeUploaded;
 
-  const VersionDialog({super.key, required this.viewModel});
+  const VersionDialog({
+    super.key,
+    required this.tag,
+    required this.body,
+    required this.timeUploaded,
+  });
 
   @override
   State<VersionDialog> createState() => _VersionDialogState();
@@ -17,7 +23,7 @@ class _VersionDialogState extends State<VersionDialog> {
   @override
   void initState() {
     super.initState();
-    LogHandler.log('Getting changelog of: ${widget.viewModel.tag}');
+    LogHandler.log('Getting changelog of: ${widget.tag}');
   }
 
   List<InlineSpan> getContent(String body) {
@@ -97,16 +103,16 @@ class _VersionDialogState extends State<VersionDialog> {
           text: TextSpan(
             children: [
               TextSpan(
-                text: widget.viewModel.tag,
+                text: widget.tag,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                   color: Theme.of(context).textTheme.titleLarge?.color,
                 ),
               ),
-              if (widget.viewModel.timeUploaded.isNotEmpty)
+              if (widget.timeUploaded.isNotEmpty)
                 TextSpan(
-                  text: '\n(${widget.viewModel.timeUploaded})',
+                  text: '\n(${widget.timeUploaded})',
                   style: TextStyle(
                     fontSize: 12,
                     color: Theme.of(context).textTheme.bodyMedium?.color,
@@ -117,7 +123,7 @@ class _VersionDialogState extends State<VersionDialog> {
         ),
         content: SingleChildScrollView(
           child: RichText(
-            text: TextSpan(children: getContent(widget.viewModel.body)),
+            text: TextSpan(children: getContent(widget.body)),
           ),
         ),
         contentPadding: const EdgeInsets.only(left: 20, right: 20, top: 20),
@@ -129,7 +135,7 @@ class _VersionDialogState extends State<VersionDialog> {
           ),
           TextButton(
             onPressed: () async {
-              final uri = Uri.parse('https://github.com/Bill-GD/fpt_jp/releases/tag/${widget.viewModel.tag}');
+              final uri = Uri.parse('https://github.com/Bill-GD/fpt_jp/releases/tag/${widget.tag}');
               final canLaunch = await canLaunchUrl(uri);
               if (canLaunch) {
                 LogHandler.log('The system has found a handler, can launch URL');

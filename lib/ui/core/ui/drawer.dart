@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../../data/repositories/about_repository.dart';
 import '../../../utils/extensions/number_duration.dart';
 import '../../../utils/helpers/globals.dart';
-import '../../about/view_model/about_view_model.dart';
-import '../../about/widgets/about_screen.dart';
+import '../../about/about_screen.dart';
 import '../styling/icon.dart';
 import '../styling/text.dart';
 import 'action_dialog.dart';
@@ -110,7 +110,7 @@ class _MainDrawerState extends State<MainDrawer> {
                           context,
                           PageRouteBuilder(
                             pageBuilder: (_, __, ___) {
-                              return AboutScreen(viewModel: AboutViewModel());
+                              return AboutScreen(aboutRepo: AboutRepository());
                             },
                             transitionsBuilder: (context, anim1, _, child) {
                               return SlideTransition(

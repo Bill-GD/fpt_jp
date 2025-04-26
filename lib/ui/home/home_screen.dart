@@ -28,30 +28,28 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     if (Globals.newestVersion.isEmpty) {
-      widget.aboutRepo.getNewestVersion().then(
-        (value) {
-          Globals.newestVersion = value.substring(1);
-          if (isVersionNewer(Globals.newestVersion)) {
-            LogHandler.log('New version found: ${Globals.newestVersion}');
-            ActionDialog.static<void>(
-              context,
-              title: 'New version available',
-              titleFontSize: titleTextStyle.fontSize!,
-              textContent: 'Current version: v${Globals.appVersion}\n'
-                  'New version: v${Globals.newestVersion}\n\n'
-                  'Check the about page for more details.',
-              contentFontSize: bodyTextStyle.fontSize!,
-              time: 200.ms,
-              actions: [
-                TextButton(
-                  onPressed: Navigator.of(context).pop,
-                  child: const Text('OK'),
-                )
-              ],
-            );
-          }
-        },
-      );
+      widget.aboutRepo.getNewestVersion().then((value) {
+        Globals.newestVersion = value.substring(1);
+        if (isVersionNewer(Globals.newestVersion)) {
+          LogHandler.log('New version found: ${Globals.newestVersion}');
+          ActionDialog.static<void>(
+            context,
+            title: 'New version available',
+            titleFontSize: titleTextStyle.fontSize!,
+            textContent: 'Current version: v${Globals.appVersion}\n'
+                'New version: v${Globals.newestVersion}\n\n'
+                'Check the about page for more details.',
+            contentFontSize: bodyTextStyle.fontSize!,
+            time: 200.ms,
+            actions: [
+              TextButton(
+                onPressed: Navigator.of(context).pop,
+                child: const Text('OK'),
+              )
+            ],
+          );
+        }
+      });
     }
   }
 

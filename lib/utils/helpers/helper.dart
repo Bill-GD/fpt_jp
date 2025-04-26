@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' show Response, get;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../handlers/log_handler.dart';
 import 'globals.dart';
@@ -66,4 +67,17 @@ BuildContext getGlobalContext() {
 /// [start] and [end] are inclusive
 List<int> range(int start, int end) {
   return List<int>.generate(end - start + 1, (i) => i + start);
+}
+
+Future<void> openGithubPage(String url) async {
+  final uri = Uri.parse(url);
+  final canLaunch = await canLaunchUrl(uri);
+  if (canLaunch) {
+    LogHandler.log('The system has found a handler, can launch URL');
+  } else {
+    LogHandler.log(
+      'URL launcher support query is not specified or can\'t launch URL, but opening regardless',
+    );
+  }
+  launchUrl(uri);
 }
