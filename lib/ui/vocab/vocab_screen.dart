@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/repositories/vocab_repository.dart';
-import '../../../domain/models/vocab.dart';
-import '../../../utils/extensions/list.dart';
-import '../../../utils/extensions/number_duration.dart';
-import '../../core/styling/text.dart';
-import '../../core/ui/action_dialog.dart';
-import '../../core/ui/drawer.dart';
+import '../../data/repositories/vocab_repository.dart';
+import '../../domain/models/vocab.dart';
+import '../../utils/extensions/list.dart';
+import '../../utils/extensions/number_duration.dart';
+import '../core/styling/text.dart';
+import '../core/ui/action_dialog.dart';
+import '../core/ui/drawer.dart';
 
 class VocabScreen extends StatefulWidget {
   final VocabRepository vocabRepo;

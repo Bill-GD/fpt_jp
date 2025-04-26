@@ -2,50 +2,39 @@ import 'dart:convert';
 
 import 'package:http/http.dart' show Response;
 
-import '../../utils/command/result.dart';
 import '../../utils/extensions/date.dart';
 import '../../utils/handlers/log_handler.dart';
 import '../../utils/helpers/helper.dart';
 
 class AboutRepository {
-  Future<Result<List<(String, String)>>> getAllTags() async {
+  Future<List<(String, String)>> getAllTags() async {
     final value = await githubAPIQuery('/git/refs/tags');
     final json = jsonDecode(value.body);
     if (json == null) {
-      return Result.error(Exception('Rate limited. Please come back later.'));
+      throw Exception('Rate limited. Please come back later.');
     }
     if (json is! List) {
       if (json['status'] == 404) {
         LogHandler.log('JSON received is not a list', LogLevel.error);
-        return Result.error(Exception('Something is wrong when trying to get version list.'));
-      } else {
-        return const Result.ok([]);
+        throw Exception('Something is wrong when trying to get version list.');
       }
+      return [];
     }
 
-    return Result.ok(json.map((e) {
+    return json.map((e) {
       final tag = e['ref'].toString().trim().split('/').last;
       final sha = e['object']['sha'].toString().trim().substring(0, 7);
       return (tag, sha);
-    }).toList());
+    }).toList();
   }
 
-  Future<Result<String>> getNewestVersion() async {
+  Future<String> getNewestVersion() async {
     final hasInternet = await checkInternetConnection();
-    if (!hasInternet) return Result.error(Exception('No internet connection'));
+    if (!hasInternet) throw Exception('No internet connection');
 
-    final result = await getAllTags();
-    String newestTag;
-
-    switch (result) {
-      case Ok():
-        final tags = result.value.map((e) => e.$1).toList();
-        if (tags.isEmpty) return Result.error(Exception('No tags exists'));
-        newestTag = tags.last;
-        return Result.ok(newestTag);
-      case Error():
-        return Result.error(result.error);
-    }
+    final tags = (await getAllTags()).map((e) => e.$1).toList();
+    if (tags.isEmpty) throw Exception('No tags exists');
+    return tags.last;
   }
 
   Future<(String, String)> getRelease(String tag, String sha) async {
