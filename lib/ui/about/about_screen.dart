@@ -94,7 +94,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           );
                         },
                         pageBuilder: (context, __, ___) {
-                          return VersionList(aboutRepo: AboutRepository());
+                          return VersionList(aboutRepo: widget.aboutRepo);
                         },
                       ));
                     },

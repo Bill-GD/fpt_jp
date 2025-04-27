@@ -1,38 +1,74 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 
-import '../../../utils/extensions/number_duration.dart';
-import '../../core/styling/text.dart';
-import '../../core/ui/action_dialog.dart';
-import '../../core/ui/drawer.dart';
-import '../view_model/kanji_view_model.dart';
+import '../../data/repositories/kanji_repository.dart';
+import '../../domain/models/kanji_lesson.dart';
+import '../../utils/extensions/number_duration.dart';
+import '../../utils/handlers/log_handler.dart';
+import '../core/styling/text.dart';
+import '../core/ui/action_dialog.dart';
+import '../core/ui/drawer.dart';
+import 'add_kanji_screen.dart';
 import 'kanji_lesson_screen.dart';
 
 class KanjiLessonListScreen extends StatefulWidget {
-  final KanjiViewModel viewModel;
+  final KanjiRepository kanjiRepo;
 
-  const KanjiLessonListScreen({super.key, required this.viewModel});
+  const KanjiLessonListScreen({super.key, required this.kanjiRepo});
 
   @override
   State<KanjiLessonListScreen> createState() => _KanjiLessonListScreenState();
 }
 
 class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
+  List<KanjiLesson> lessons = [];
+  bool isLoading = true;
+  (int, int) lessonRange = (0, 0);
+
   @override
   void initState() {
     super.initState();
-    widget.viewModel.loadList.addListener(onLoad);
-    widget.viewModel.loadList.execute();
+    loadList();
   }
 
-  @override
-  void dispose() {
-    widget.viewModel.loadList.removeListener(onLoad);
-    super.dispose();
+  void loadList() async {
+    setState(() => isLoading = true);
+    lessons = await widget.kanjiRepo.getLessonList();
+    setState(() => isLoading = false);
   }
 
-  void onLoad() {
-    setState(() {});
+  void queueLesson(int lower, int upper) {
+    if (lower > upper) throw Exception('Starting lesson is higher than ending lesson');
+
+    lessonRange = (lower, upper);
+    if (lower == upper) {
+      LogHandler.log(lower == 0 ? 'Queued all lessons' : 'Queued lesson: $lower');
+    }
+
+    LogHandler.log('Queued lessons: $lower - $upper');
+  }
+
+  void openAddKanji(int num) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) {
+          return AddKanjiScreen(
+            kanjiRepo: widget.kanjiRepo,
+            lessonNum: num,
+          );
+        },
+        transitionsBuilder: (context, anim1, _, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 1),
+              end: const Offset(0, 0),
+            ).animate(anim1.drive(CurveTween(curve: Curves.decelerate))),
+            child: child,
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -44,7 +80,7 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
             message: 'Refresh the list',
             child: IconButton(
               icon: const Icon(Icons.refresh_rounded),
-              onPressed: widget.viewModel.loadList.execute,
+              onPressed: loadList,
             ),
           ),
           const EndDrawerButton(),
@@ -67,14 +103,17 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                     openColor: Colors.transparent,
                     transitionDuration: 400.ms,
                     openBuilder: (context, _) {
-                      return KanjiLessonScreen(viewModel: widget.viewModel);
+                      return KanjiLessonScreen(
+                        kanjiRepo: widget.kanjiRepo,
+                        lessonRange: lessonRange,
+                      );
                     },
                     closedBuilder: (context, action) {
                       return Tooltip(
                         message: 'Review all Kanji',
                         child: OutlinedButton(
-                          onPressed: () async {
-                            await widget.viewModel.queueLesson.execute((0, 0));
+                          onPressed: () {
+                            queueLesson(0, 0);
                             action();
                           },
                           child: const Text('All lessons'),
@@ -88,7 +127,10 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                     openColor: Colors.transparent,
                     transitionDuration: 400.ms,
                     openBuilder: (context, _) {
-                      return KanjiLessonScreen(viewModel: widget.viewModel);
+                      return KanjiLessonScreen(
+                        kanjiRepo: widget.kanjiRepo,
+                        lessonRange: lessonRange,
+                      );
                     },
                     closedBuilder: (context, action) {
                       final lowerControl = TextEditingController(), upperControl = TextEditingController();
@@ -136,9 +178,9 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                                   onPressed: () async {
                                     final lower = int.tryParse(lowerControl.text),
                                         upper = int.tryParse(upperControl.text);
-                                    if (lower != null && upper != null && lower <= upper) {
+                                    if (lower != null && upper != null) {
                                       Navigator.pop(context);
-                                      await widget.viewModel.queueLesson.execute((lower, upper));
+                                      queueLesson(lower, upper);
                                       action();
                                     }
                                   },
@@ -155,14 +197,11 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                 ],
               ),
             ),
-            ListenableBuilder(
-              listenable: widget.viewModel,
-              builder: (context, _) {
-                if (widget.viewModel.loadList.running) {
-                  return const CircularProgressIndicator();
-                }
+            Builder(
+              builder: (context) {
+                if (isLoading) return const CircularProgressIndicator();
 
-                if (widget.viewModel.lessons.isEmpty) {
+                if (lessons.isEmpty) {
                   return const Column(
                     children: [
                       Icon(Icons.folder_off_rounded),
@@ -173,9 +212,9 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
 
                 return Flexible(
                   child: ListView.builder(
-                    itemCount: widget.viewModel.lessons.length,
+                    itemCount: lessons.length,
                     itemBuilder: (context, index) {
-                      final lesson = widget.viewModel.lessons[index];
+                      final lesson = lessons[index];
 
                       return OpenContainer(
                         closedElevation: 0,
@@ -183,7 +222,10 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                         openColor: Colors.transparent,
                         transitionDuration: 400.ms,
                         openBuilder: (context, _) {
-                          return KanjiLessonScreen(viewModel: widget.viewModel);
+                          return KanjiLessonScreen(
+                            kanjiRepo: widget.kanjiRepo,
+                            lessonRange: lessonRange,
+                          );
                         },
                         closedBuilder: (context, action) {
                           return ListTile(
@@ -199,7 +241,7 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                               ),
                               itemBuilder: (_) => [
                                 PopupMenuItem(
-                                  onTap: () => widget.viewModel.openAddKanji.execute(lesson.lessonNum),
+                                  onTap: () => openAddKanji(lesson.lessonNum),
                                   child: const Text('Add new Kanji'),
                                 ),
                               ],
@@ -207,7 +249,7 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                               child: const Icon(Icons.more_vert_rounded),
                             ),
                             onTap: () async {
-                              await widget.viewModel.queueLesson.execute((lesson.lessonNum, lesson.lessonNum));
+                              queueLesson(lesson.lessonNum, lesson.lessonNum);
                               action();
                             },
                           );
@@ -247,7 +289,7 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                   final lessonNum = int.tryParse(controller.text);
                   if (lessonNum != null) {
                     Navigator.pop(context);
-                    widget.viewModel.openAddKanji.execute(lessonNum);
+                    openAddKanji(lessonNum);
                   }
                 },
                 child: const Text('Create'),

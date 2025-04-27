@@ -10,8 +10,7 @@ import '../../utils/helpers/helper.dart';
 import '../core/styling/text.dart';
 import '../core/ui/action_dialog.dart';
 import '../core/ui/drawer.dart';
-import '../kanji/view_model/kanji_view_model.dart';
-import '../kanji/widgets/kanji_lesson_list_screen.dart';
+import '../kanji/kanji_lesson_list_screen.dart';
 import '../vocab/vocab_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -75,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     getGlobalContext(),
                     PageRouteBuilder(
                       pageBuilder: (_, __, ___) {
-                        return KanjiLessonListScreen(viewModel: KanjiViewModel(kanjiRepo: KanjiRepository()));
+                        return KanjiLessonListScreen(kanjiRepo: KanjiRepository());
                       },
                       transitionsBuilder: (context, anim1, _, child) {
                         return SlideTransition(

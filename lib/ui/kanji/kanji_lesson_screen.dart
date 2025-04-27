@@ -3,15 +3,17 @@ import 'dart:math';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 
-import '../../../utils/extensions/number_duration.dart';
-import '../../core/styling/text.dart';
-import '../../core/ui/drawer.dart';
-import '../view_model/kanji_view_model.dart';
+import '../../data/repositories/kanji_repository.dart';
+import '../../domain/models/kanji_word.dart';
+import '../../utils/extensions/number_duration.dart';
+import '../core/styling/text.dart';
+import '../core/ui/drawer.dart';
 
 class KanjiLessonScreen extends StatefulWidget {
-  final KanjiViewModel viewModel;
+  final KanjiRepository kanjiRepo;
+  final (int, int) lessonRange;
 
-  const KanjiLessonScreen({super.key, required this.viewModel});
+  const KanjiLessonScreen({super.key, required this.kanjiRepo, required this.lessonRange});
 
   @override
   State<KanjiLessonScreen> createState() => _KanjiLessonScreenState();
@@ -19,39 +21,69 @@ class KanjiLessonScreen extends StatefulWidget {
 
 class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
   late AnimationController flipController;
-  bool asList = false;
+  bool isLoading = true, asList = false, isWordVisible = false, isMultiLesson = false;
+  List<KanjiWord> words = [];
+  int currentLessonNum = -1, currentWordIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    widget.viewModel.toggleVisibility.addListener(onVisibilityToggled);
-    widget.viewModel.loadLesson.addListener(updateWidget);
-    widget.viewModel.loadLesson.execute();
+    if (widget.lessonRange.$1 == widget.lessonRange.$2) {
+      currentLessonNum = widget.lessonRange.$1;
+      isMultiLesson = false;
+    }
+    isMultiLesson = true;
+    loadLesson();
   }
 
-  void onVisibilityToggled() {
+  Future<void> loadLesson() async {
+    setState(() => isLoading = true);
+    words = await widget.kanjiRepo.getKanjiOfLesson(widget.lessonRange.$1, widget.lessonRange.$2);
+    isWordVisible = false;
+    setState(() => isLoading = false);
+  }
+
+  void toggleVisibility() {
+    Future.delayed(150.ms, () => isWordVisible = !isWordVisible);
     flipController.reverse().then((_) => flipController.forward());
-    updateWidget();
+    setState(() {});
   }
 
-  void updateWidget() {
-    if (mounted) setState(() {});
+  Future<void> nextWord() async {
+    currentWordIndex++;
+    isWordVisible = false;
   }
 
-  @override
-  void dispose() {
-    widget.viewModel.toggleVisibility.removeListener(onVisibilityToggled);
-    widget.viewModel.loadLesson.removeListener(updateWidget);
-    widget.viewModel.resetWordIndex.execute();
-    super.dispose();
+  Future<void> prevWord() async {
+    currentWordIndex--;
+    isWordVisible = false;
+  }
+
+  Future<void> toFirst() async {
+    currentWordIndex = 0;
+    isWordVisible = false;
+  }
+
+  Future<void> toLast() async {
+    currentWordIndex = words.length - 1;
+    isWordVisible = false;
+  }
+
+  Future<void> shuffleWords() async {
+    currentWordIndex = 0;
+    words.shuffle();
+    isWordVisible = false;
+  }
+
+  Future<void> resetWordIndex() async {
+    currentWordIndex = 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: widget.viewModel,
-      builder: (context, _) {
-        final index = widget.viewModel.currentWordIndex, wordCount = widget.viewModel.words.length;
+    return Builder(
+      builder: (context) {
+        final index = currentWordIndex, wordCount = words.length;
 
         return Scaffold(
           appBar: AppBar(
@@ -66,14 +98,14 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
               const EndDrawerButton(),
             ],
             title: Text(
-              widget.viewModel.isMultiLesson
-                  ? 'Lesson ${widget.viewModel.lessonRange.$1} - ${widget.viewModel.lessonRange.$2}'
-                  : widget.viewModel.currentLessonNum > 0
-                      ? 'Lesson ${widget.viewModel.currentLessonNum}'
+              isMultiLesson
+                  ? 'Lesson ${widget.lessonRange.$1} - ${widget.lessonRange.$2}'
+                  : currentLessonNum > 0
+                      ? 'Lesson $currentLessonNum'
                       : 'All Kanji',
             ),
             centerTitle: true,
-            bottom: widget.viewModel.loadLesson.running || widget.viewModel.words.isEmpty
+            bottom: isLoading || asList || words.isEmpty
                 ? null
                 : PreferredSize(
                     preferredSize: const Size.fromHeight(20),
@@ -87,11 +119,11 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
           body: Center(
             child: Builder(
               builder: (context) {
-                if (widget.viewModel.loadLesson.running || widget.viewModel.words.isEmpty) {
+                if (isLoading || words.isEmpty) {
                   return const CircularProgressIndicator();
                 }
 
-                final word = widget.viewModel.words[index],
+                final word = words[index],
                     boxSize = min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.75;
 
                 if (asList) {
@@ -100,7 +132,7 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
                     child: ListView.builder(
                       itemCount: wordCount,
                       itemBuilder: (context, index) {
-                        final word = widget.viewModel.words[index];
+                        final word = words[index];
                         return ListTile(
                           leading: Text(
                             '${index + 1}',
@@ -121,7 +153,7 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
                 }
 
                 return GestureDetector(
-                  onTap: widget.viewModel.toggleVisibility.execute,
+                  onTap: toggleVisibility,
                   child: Container(
                     alignment: Alignment.center,
                     margin: const EdgeInsets.all(24),
@@ -136,10 +168,8 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
                     ),
                     constraints: BoxConstraints.loose(Size.square(boxSize)),
                     child: Text(
-                      widget.viewModel.isWordVisible
-                          ? '${word.sinoViet}\n${word.pronunciation}\n${word.meaning}'
-                          : word.word,
-                      style: titleTextStyle.copyWith(fontSize: widget.viewModel.isWordVisible ? 24 : 32),
+                      isWordVisible ? '${word.sinoViet}\n${word.pronunciation}\n${word.meaning}' : word.word,
+                      style: titleTextStyle.copyWith(fontSize: isWordVisible ? 24 : 32),
                       textAlign: TextAlign.center,
                     ),
                   ).flipInX(
@@ -159,25 +189,25 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.keyboard_double_arrow_left_rounded),
-                  onPressed: index <= 0 ? null : widget.viewModel.toFirst.execute,
+                  onPressed: index <= 0 ? null : toFirst,
                 ),
                 IconButton(
                   icon: const Icon(Icons.arrow_back_ios_new_rounded),
-                  onPressed: index <= 0 ? null : widget.viewModel.prevWord.execute,
+                  onPressed: index <= 0 ? null : prevWord,
                 ),
                 IconButton(
                   icon: const Icon(Icons.shuffle),
-                  onPressed: widget.viewModel.shuffleWords.execute,
+                  onPressed: shuffleWords,
                 ),
                 IconButton(
                   icon: const Icon(Icons.arrow_forward_ios_rounded),
                   onPressed: index >= wordCount - 1 //
                       ? null
-                      : widget.viewModel.nextWord.execute,
+                      : nextWord,
                 ),
                 IconButton(
                   icon: const Icon(Icons.keyboard_double_arrow_right_rounded),
-                  onPressed: index >= wordCount - 1 ? null : widget.viewModel.toLast.execute,
+                  onPressed: index >= wordCount - 1 ? null : toLast,
                 ),
               ],
             ),
