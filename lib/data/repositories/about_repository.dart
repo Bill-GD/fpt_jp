@@ -44,7 +44,7 @@ class AboutRepository {
     if (json == null) throw Exception('Rate limited. Please come back later.');
     if (json is! Map) throw Exception('Something is wrong, JSON received is not a map.');
 
-    LogHandler.log('Got release of: t=$tag, sha=$sha');
+    LogHandler.log('Got release with: t=$tag, sha=$sha');
     final timeUploaded = DateTime.parse(json['published_at'] as String).toDateString();
     return (json['body'] as String, timeUploaded);
   }

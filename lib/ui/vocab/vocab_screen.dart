@@ -149,9 +149,12 @@ class _VocabScreenState extends State<VocabScreen> {
                       );
                     },
                     body: word.extras.isEmpty
-                        ? const Text(
-                            'No extra vocabulary',
-                            style: bodyTextStyle,
+                        ? const Padding(
+                            padding: EdgeInsets.only(bottom: 8),
+                            child: Text(
+                              'No extra vocabulary',
+                              style: bodyTextStyle,
+                            ),
                           )
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.start,

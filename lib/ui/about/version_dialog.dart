@@ -20,12 +20,6 @@ class VersionDialog extends StatefulWidget {
 }
 
 class _VersionDialogState extends State<VersionDialog> {
-  @override
-  void initState() {
-    super.initState();
-    LogHandler.log('Getting changelog of: ${widget.tag}');
-  }
-
   List<InlineSpan> getContent(String body) {
     final List<InlineSpan> bodySpans = [];
     final List<String> bodyLines = body

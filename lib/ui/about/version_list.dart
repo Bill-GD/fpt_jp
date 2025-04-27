@@ -47,7 +47,7 @@ class _VersionListState extends State<VersionList> {
     final body = result.$1, timeUploaded = result.$2;
 
     if (mounted) {
-      await Navigator.of(context).push(RawDialogRoute(
+      Navigator.of(context).push(RawDialogRoute(
         transitionDuration: 300.ms,
         barrierDismissible: true,
         barrierLabel: '',

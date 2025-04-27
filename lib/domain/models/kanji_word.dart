@@ -13,4 +13,13 @@ class KanjiWord {
     required this.sinoViet,
     required this.meaning,
   });
+
+  static KanjiWord empty(int lessonNum) => KanjiWord(
+        id: -1,
+        lessonNum: lessonNum,
+        word: '',
+        pronunciation: '',
+        sinoViet: '',
+        meaning: '',
+      );
 }

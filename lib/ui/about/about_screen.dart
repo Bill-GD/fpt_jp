@@ -20,7 +20,7 @@ class AboutScreen extends StatefulWidget {
 }
 
 class _AboutScreenState extends State<AboutScreen> {
-  bool _isInternetConnected = false;
+  bool isInternetConnected = false;
   late StreamSubscription<List<ConnectivityResult>> connectStream;
 
   @override
@@ -28,12 +28,12 @@ class _AboutScreenState extends State<AboutScreen> {
     super.initState();
 
     checkInternetConnection().then((val) {
-      _isInternetConnected = val;
+      setState(() => isInternetConnected = val);
     });
 
     connectStream = Connectivity().onConnectivityChanged.listen((newResults) {
       checkInternetConnection(newResults).then((val) {
-        _isInternetConnected = val;
+        setState(() => isInternetConnected = val);
       });
     });
   }
@@ -56,7 +56,7 @@ class _AboutScreenState extends State<AboutScreen> {
         body: Column(
           children: [
             Visibility(
-              visible: !_isInternetConnected,
+              visible: !isInternetConnected,
               child: Container(
                 width: double.infinity,
                 color: Colors.red,
@@ -78,7 +78,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     title: const LeadingText('Version list', bold: false, size: 16),
                     subtitle: const Text('View the list of versions of this app'),
                     onTap: () {
-                      if (!_isInternetConnected) return;
+                      if (!isInternetConnected) return;
 
                       Navigator.of(context).push(PageRouteBuilder(
                         transitionDuration: 300.ms,

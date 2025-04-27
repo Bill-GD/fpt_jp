@@ -1,1 +1,2 @@
 - Kanji sino will be forced uppercase before inserting
+- Removed all usages of MVVM (command pattern, result pattern, view models)

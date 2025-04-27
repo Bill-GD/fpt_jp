@@ -31,8 +31,9 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
     if (widget.lessonRange.$1 == widget.lessonRange.$2) {
       currentLessonNum = widget.lessonRange.$1;
       isMultiLesson = false;
+    } else {
+      isMultiLesson = true;
     }
-    isMultiLesson = true;
     loadLesson();
   }
 
@@ -44,7 +45,7 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
   }
 
   void toggleVisibility() {
-    Future.delayed(150.ms, () => isWordVisible = !isWordVisible);
+    Future.delayed(150.ms, () => setState(() => isWordVisible = !isWordVisible));
     flipController.reverse().then((_) => flipController.forward());
     setState(() {});
   }
@@ -52,31 +53,37 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
   Future<void> nextWord() async {
     currentWordIndex++;
     isWordVisible = false;
+    setState(() {});
   }
 
   Future<void> prevWord() async {
     currentWordIndex--;
     isWordVisible = false;
+    setState(() {});
   }
 
   Future<void> toFirst() async {
     currentWordIndex = 0;
     isWordVisible = false;
+    setState(() {});
   }
 
   Future<void> toLast() async {
     currentWordIndex = words.length - 1;
     isWordVisible = false;
+    setState(() {});
   }
 
   Future<void> shuffleWords() async {
     currentWordIndex = 0;
     words.shuffle();
     isWordVisible = false;
+    setState(() {});
   }
 
   Future<void> resetWordIndex() async {
     currentWordIndex = 0;
+    setState(() {});
   }
 
   @override
@@ -127,28 +134,25 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
                     boxSize = min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.75;
 
                 if (asList) {
-                  return Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: ListView.builder(
-                      itemCount: wordCount,
-                      itemBuilder: (context, index) {
-                        final word = words[index];
-                        return ListTile(
-                          leading: Text(
-                            '${index + 1}',
-                            style: titleTextStyle,
-                          ),
-                          title: Text(
-                            word.word,
-                            style: titleTextStyle.copyWith(fontSize: 32),
-                          ),
-                          subtitle: Text(
-                            '${word.sinoViet} ${word.pronunciation} ${word.meaning}',
-                            style: titleTextStyle.copyWith(fontSize: 24),
-                          ),
-                        );
-                      },
-                    ),
+                  return ListView.builder(
+                    itemCount: wordCount,
+                    itemBuilder: (context, index) {
+                      final word = words[index];
+                      return ListTile(
+                        leading: Text(
+                          '${index + 1}',
+                          style: titleTextStyle,
+                        ),
+                        title: Text(
+                          word.word,
+                          style: titleTextStyle.copyWith(fontSize: 32),
+                        ),
+                        subtitle: Text(
+                          '${word.sinoViet} ${word.pronunciation} ${word.meaning}',
+                          style: titleTextStyle.copyWith(fontSize: 24),
+                        ),
+                      );
+                    },
                   );
                 }
 
@@ -182,8 +186,11 @@ class _KanjiLessonScreenState extends State<KanjiLessonScreen> {
               },
             ),
           ),
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              border: BorderDirectional(top: BorderSide(color: Theme.of(context).colorScheme.onSurface)),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

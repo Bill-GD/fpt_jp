@@ -24,6 +24,7 @@ class _AddKanjiScreenState extends State<AddKanjiScreen> {
   @override
   void initState() {
     super.initState();
+    words.add(KanjiWord.empty(widget.lessonNum));
     updateControllers();
   }
 
@@ -88,14 +89,7 @@ class _AddKanjiScreenState extends State<AddKanjiScreen> {
                       onPressed: isInserting
                           ? null
                           : () {
-                              words.add(KanjiWord(
-                                id: -1,
-                                lessonNum: widget.lessonNum,
-                                word: '',
-                                pronunciation: '',
-                                sinoViet: '',
-                                meaning: '',
-                              ));
+                              words.add(KanjiWord.empty(widget.lessonNum));
                               updateControllers();
                             },
                       icon: const Icon(Icons.add_rounded),
