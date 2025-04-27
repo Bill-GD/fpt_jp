@@ -22,4 +22,11 @@ class KanjiWord {
         sinoViet: '',
         meaning: '',
       );
+
+  List<String> valuesList() => [
+        word,
+        pronunciation,
+        sinoViet,
+        meaning,
+      ];
 }

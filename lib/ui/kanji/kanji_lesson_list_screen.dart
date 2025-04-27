@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:fpt_jp/ui/kanji/kanji_editor_screen.dart';
 
 import '../../data/repositories/kanji_repository.dart';
 import '../../domain/models/kanji_lesson.dart';
@@ -54,6 +55,29 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
       PageRouteBuilder(
         pageBuilder: (_, __, ___) {
           return AddKanjiScreen(
+            kanjiRepo: widget.kanjiRepo,
+            lessonNum: num,
+          );
+        },
+        transitionsBuilder: (context, anim1, _, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 1),
+              end: const Offset(0, 0),
+            ).animate(anim1.drive(CurveTween(curve: Curves.decelerate))),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
+  void openKanjiEditor(int num) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) {
+          return KanjiEditorScreen(
             kanjiRepo: widget.kanjiRepo,
             lessonNum: num,
           );
@@ -243,6 +267,10 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                                 PopupMenuItem(
                                   onTap: () => openAddKanji(lesson.lessonNum),
                                   child: const Text('Add new Kanji'),
+                                ),
+                                PopupMenuItem(
+                                  onTap: () => openKanjiEditor(lesson.lessonNum),
+                                  child: const Text('Edit Kanji'),
                                 ),
                               ],
                               position: PopupMenuPosition.under,
