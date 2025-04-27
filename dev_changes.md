@@ -1,3 +1,1 @@
-- Kanji sino will be forced uppercase before inserting
-- Removed all usages of MVVM (command pattern, result pattern, view models)
-- Added new Kanji editor with a table (similar to MySQL data editing)
+- Some UI changes to accommodate Android screen

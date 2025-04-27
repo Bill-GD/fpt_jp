@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:fpt_jp/ui/core/styling/text.dart';
-import 'package:fpt_jp/utils/extensions/list.dart';
 
 import '../../data/repositories/kanji_repository.dart';
 import '../../domain/models/kanji_word.dart';
+import '../../utils/extensions/list.dart';
+import '../core/styling/text.dart';
 import '../core/ui/drawer.dart';
 
 class KanjiEditorScreen extends StatefulWidget {
@@ -144,15 +146,16 @@ class _KanjiEditorScreenState extends State<KanjiEditorScreen> {
                                 child: isEditingCell && wordIdx == editingCellCoord.$1 && cellIdx == editingCellCoord.$2
                                     ? TextField(
                                         onTap: () {},
-                                        maxLines: 1,
+                                        maxLines: null,
                                         autofocus: true,
-                                        style: const TextStyle(fontSize: 20),
+                                        style: TextStyle(fontSize: Platform.isAndroid ? 16 : 20),
                                         decoration: textFieldDecoration(
                                           contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                                           border: InputBorder.none,
                                           suffixIcon: Tooltip(
                                             message: 'Confirm change',
                                             child: IconButton(
+                                              iconSize: Platform.isAndroid ? 20 : null,
                                               icon: Icon(
                                                 Icons.check_rounded,
                                                 color: Theme.of(context).colorScheme.primary,

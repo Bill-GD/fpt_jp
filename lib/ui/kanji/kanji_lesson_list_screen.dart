@@ -1,6 +1,7 @@
+import 'dart:io';
+
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:fpt_jp/ui/kanji/kanji_editor_screen.dart';
 
 import '../../data/repositories/kanji_repository.dart';
 import '../../domain/models/kanji_lesson.dart';
@@ -10,6 +11,7 @@ import '../core/styling/text.dart';
 import '../core/ui/action_dialog.dart';
 import '../core/ui/drawer.dart';
 import 'add_kanji_screen.dart';
+import 'kanji_editor_screen.dart';
 import 'kanji_lesson_screen.dart';
 
 class KanjiLessonListScreen extends StatefulWidget {
@@ -292,7 +294,11 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
         ),
       ),
       // floatingActionButtonAnimator: FloatingActionButtonAnimator(),
+      floatingActionButtonLocation: Platform.isAndroid //
+          ? FloatingActionButtonLocation.miniCenterFloat
+          : FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
+        mini: Platform.isAndroid ? true : false,
         onPressed: () async {
           final controller = TextEditingController();
           await ActionDialog.static(
