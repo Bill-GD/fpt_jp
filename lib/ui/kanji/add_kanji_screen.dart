@@ -24,6 +24,9 @@ class _AddKanjiScreenState extends State<AddKanjiScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('It\'s recommended to use the editor instead.')),
+        ));
     words.add(KanjiWord.empty(widget.lessonNum));
     updateControllers();
   }

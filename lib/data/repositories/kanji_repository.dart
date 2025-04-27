@@ -34,11 +34,31 @@ class KanjiRepository {
   }
 
   Future<void> insertKanji(List<KanjiWord> words) async {
+    if (words.isEmpty) return;
     String query = 'insert into kanji_word (lesson_num, word, pronunciation, sino_viet, meaning) values ';
     final wordInserts = words.where((e) => !e.isEmpty).map(
         (e) => "('${e.lessonNum}', '${e.word}', '${e.pronunciation}', '${e.sinoViet.toUpperCase()}', '${e.meaning}')");
 
     await DatabaseHandler.execute(query + wordInserts.join(','));
     LogHandler.log('Inserted ${words.length} new kanjis');
+  }
+
+  Future<void> updateKanji(List<KanjiWord> words) async {
+    if (words.isEmpty) return;
+    for (final w in words) {
+      await DatabaseHandler.execute(
+        'update kanji_word '
+        'set word = :word, pronunciation = :pronunciation, sino_viet = :sino_viet, meaning = :meaning '
+        'where id = :id',
+        {
+          'word': w.word,
+          'pronunciation': w.pronunciation,
+          'sino_viet': w.sinoViet,
+          'meaning': w.meaning,
+          'id': w.id,
+        },
+      );
+    }
+    LogHandler.log('Updated ${words.length} kanjis');
   }
 }

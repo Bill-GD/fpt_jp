@@ -18,9 +18,11 @@ class KanjiEditorScreen extends StatefulWidget {
 
 class _KanjiEditorScreenState extends State<KanjiEditorScreen> {
   List<KanjiWord> words = [];
+  Set<int> editedWords = {};
   bool isLoading = true, isEditingCell = false, isInserting = false;
   (int, int) editingCellCoord = (0, 0);
   final textEditController = TextEditingController();
+  late final int originalCount;
 
   @override
   void initState() {
@@ -31,6 +33,7 @@ class _KanjiEditorScreenState extends State<KanjiEditorScreen> {
   Future<void> loadLesson() async {
     setState(() => isLoading = true);
     words = await widget.kanjiRepo.getKanjiOfLesson(widget.lessonNum, widget.lessonNum);
+    originalCount = words.length;
     setState(() => isLoading = false);
   }
 
@@ -38,14 +41,23 @@ class _KanjiEditorScreenState extends State<KanjiEditorScreen> {
     final (wordIdx, cellIdx) = editingCellCoord;
     switch (cellIdx) {
       case 0:
-        words[wordIdx].word = textEditController.text;
+        final newVal = textEditController.text.trim();
+        if (newVal == words[wordIdx].word) return;
+        words[wordIdx].word = newVal;
       case 1:
-        words[wordIdx].pronunciation = textEditController.text;
+        final newVal = textEditController.text.trim();
+        if (newVal == words[wordIdx].pronunciation) return;
+        words[wordIdx].pronunciation = newVal;
       case 2:
-        words[wordIdx].sinoViet = textEditController.text.toUpperCase();
+        final newVal = textEditController.text.toUpperCase().trim();
+        if (newVal == words[wordIdx].sinoViet) return;
+        words[wordIdx].sinoViet = newVal;
       case 3:
-        words[wordIdx].meaning = textEditController.text;
+        final newVal = textEditController.text.trim();
+        if (newVal == words[wordIdx].meaning) return;
+        words[wordIdx].meaning = newVal;
     }
+    if (words[wordIdx].id >= 0) editedWords.add(words[wordIdx].id);
   }
 
   @override
@@ -54,97 +66,124 @@ class _KanjiEditorScreenState extends State<KanjiEditorScreen> {
       appBar: AppBar(
         title: Text('Kanji Editor: Lesson ${widget.lessonNum}'),
         centerTitle: true,
-        actions: [
-          Tooltip(
-            message: 'Submit',
-            child: IconButton(
-              onPressed: isInserting
-                  ? null
-                  : () async {
-                      isEditingCell = false;
-                      isInserting = true;
-                      setState(() {});
-                      // await widget.kanjiRepo.insertKanji(words);
-                      // if (context.mounted) Navigator.pop(context);
-                    },
-              icon: const Icon(Icons.save_rounded),
-            ),
-          ),
-          const EndDrawerButton(),
-        ],
+        actions: const [EndDrawerButton()],
+        forceMaterialTransparency: true,
       ),
       endDrawer: const MainDrawer(),
       body: SafeArea(
-        child: Builder(
-          builder: (context) {
-            if (isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            return SingleChildScrollView(
-              child: Table(
-                columnWidths: const {
-                  0: FractionColumnWidth(0.15),
-                  1: FractionColumnWidth(0.2),
-                  2: FractionColumnWidth(0.25),
-                  3: FlexColumnWidth(),
-                },
-                border: TableBorder.all(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                children: words.mapIndexed((wordIdx, w) {
-                  return TableRow(
-                    children: w.valuesList().mapIndexed((cellIdx, e) {
-                      return TableCell(
-                        verticalAlignment: TableCellVerticalAlignment.middle,
-                        child: GestureDetector(
-                          onTap: () {
-                            if (isInserting) return;
-                            textEditController.text = e;
-                            editingCellCoord = (wordIdx, cellIdx);
-                            setState(() => isEditingCell = true);
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: isEditingCell && wordIdx == editingCellCoord.$1 && cellIdx == editingCellCoord.$2
-                              ? TextField(
-                                  onTap: () {},
-                                  maxLines: null,
-                                  autofocus: true,
-                                  style: const TextStyle(fontSize: 20),
-                                  decoration: textFieldDecoration(
-                                    contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                                    border: InputBorder.none,
-                                    suffixIcon: Tooltip(
-                                      message: 'Confirm change',
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.check_rounded,
-                                          color: Theme.of(context).colorScheme.primary,
-                                        ),
-                                        onPressed: () {
-                                          updateWord();
-                                          setState(() => isEditingCell = false);
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  controller: textEditController,
-                                )
-                              : Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                                  child: Text(
-                                    e,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ),
-                        ),
-                      );
-                    }).toList(),
-                  );
-                }).toList(),
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                border: BorderDirectional(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface)),
               ),
-            );
-          },
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: isInserting
+                        ? null
+                        : () {
+                            words.add(KanjiWord.empty(widget.lessonNum));
+                            setState(() {});
+                          },
+                    icon: const Icon(Icons.add_rounded),
+                    label: const Text('New term'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: isInserting
+                        ? null
+                        : () async {
+                            isEditingCell = false;
+                            isInserting = true;
+                            setState(() {});
+                            await widget.kanjiRepo.insertKanji(words.sublist(originalCount));
+                            await widget.kanjiRepo.updateKanji(
+                              words.where((e) => editedWords.contains(e.id)).toList(),
+                            );
+                            if (context.mounted) Navigator.pop(context);
+                          },
+                    icon: const Icon(Icons.save_rounded),
+                    label: const Text('Submit'),
+                  ),
+                ],
+              ),
+            ),
+            Builder(
+              builder: (context) {
+                if (isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                return Flexible(
+                  child: SingleChildScrollView(
+                    child: Table(
+                      columnWidths: const {
+                        0: FractionColumnWidth(0.15),
+                        1: FractionColumnWidth(0.2),
+                        2: FractionColumnWidth(0.25),
+                        3: FlexColumnWidth(),
+                      },
+                      border: TableBorder.all(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      children: words.mapIndexed((wordIdx, w) {
+                        return TableRow(
+                          children: w.valuesList().mapIndexed((cellIdx, e) {
+                            return TableCell(
+                              verticalAlignment: TableCellVerticalAlignment.middle,
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (isInserting) return;
+                                  textEditController.text = e;
+                                  editingCellCoord = (wordIdx, cellIdx);
+                                  setState(() => isEditingCell = true);
+                                },
+                                behavior: HitTestBehavior.opaque,
+                                child: isEditingCell && wordIdx == editingCellCoord.$1 && cellIdx == editingCellCoord.$2
+                                    ? TextField(
+                                        onTap: () {},
+                                        maxLines: 1,
+                                        autofocus: true,
+                                        style: const TextStyle(fontSize: 20),
+                                        decoration: textFieldDecoration(
+                                          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                                          border: InputBorder.none,
+                                          suffixIcon: Tooltip(
+                                            message: 'Confirm change',
+                                            child: IconButton(
+                                              icon: Icon(
+                                                Icons.check_rounded,
+                                                color: Theme.of(context).colorScheme.primary,
+                                              ),
+                                              onPressed: () {
+                                                updateWord();
+                                                setState(() => isEditingCell = false);
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        controller: textEditController,
+                                      )
+                                    : Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                                        child: Text(
+                                          e,
+                                          style: const TextStyle(fontSize: 20),
+                                        ),
+                                      ),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
