@@ -149,19 +149,24 @@ class _KanjiEditorScreenState extends State<KanjiEditorScreen> {
                                         maxLines: null,
                                         autofocus: true,
                                         style: TextStyle(fontSize: Platform.isAndroid ? 16 : 20),
+                                        onTapOutside: (event) {
+                                          if (event.buttons == 1) {
+                                            updateWord();
+                                            setState(() => isEditingCell = false);
+                                          }
+                                        },
                                         decoration: textFieldDecoration(
                                           contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                                           border: InputBorder.none,
                                           suffixIcon: Tooltip(
-                                            message: 'Confirm change',
+                                            message: 'Cancel change',
                                             child: IconButton(
                                               iconSize: Platform.isAndroid ? 20 : null,
                                               icon: Icon(
-                                                Icons.check_rounded,
-                                                color: Theme.of(context).colorScheme.primary,
+                                                Icons.close_rounded,
+                                                color: Theme.of(context).colorScheme.error,
                                               ),
                                               onPressed: () {
-                                                updateWord();
                                                 setState(() => isEditingCell = false);
                                               },
                                             ),

@@ -1,1 +1,2 @@
 - Some UI changes to accommodate Android screen
+- Kanji editor: use icon to cancel, tap outside to make change

@@ -1,7 +1,3 @@
-## Features
-
-- Added new Kanji editor for better control of the editing.
-
 ## Changes
 
-- Sino for Kanji will be forced uppercase.
+- Kanji editor cell editing actions are reversed: use button to cancel, tap/click outside to make change.
