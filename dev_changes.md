@@ -1,2 +1,3 @@
 - Some UI changes to accommodate Android screen
 - Kanji editor: use icon to cancel, tap outside to make change
+- Editor ignores empty kanji, sino is optional

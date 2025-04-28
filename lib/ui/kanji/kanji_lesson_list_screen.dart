@@ -46,9 +46,9 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
     lessonRange = (lower, upper);
     if (lower == upper) {
       LogHandler.log(lower == 0 ? 'Queued all lessons' : 'Queued lesson: $lower');
+    } else {
+      LogHandler.log('Queued lessons: $lower - $upper');
     }
-
-    LogHandler.log('Queued lessons: $lower - $upper');
   }
 
   void openAddKanji(int num) {

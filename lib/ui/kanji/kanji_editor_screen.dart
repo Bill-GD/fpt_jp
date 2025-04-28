@@ -100,9 +100,11 @@ class _KanjiEditorScreenState extends State<KanjiEditorScreen> {
                             isEditingCell = false;
                             isInserting = true;
                             setState(() {});
-                            await widget.kanjiRepo.insertKanji(words.sublist(originalCount));
+                            await widget.kanjiRepo.insertKanji(
+                              words.sublist(originalCount).where((e) => !e.isEmpty).toList(),
+                            );
                             await widget.kanjiRepo.updateKanji(
-                              words.where((e) => editedWords.contains(e.id)).toList(),
+                              words.where((e) => editedWords.contains(e.id) && !e.isEmpty).toList(),
                             );
                             if (context.mounted) Navigator.pop(context);
                           },
