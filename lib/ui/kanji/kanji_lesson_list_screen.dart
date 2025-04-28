@@ -323,7 +323,7 @@ class _KanjiLessonListScreenState extends State<KanjiLessonListScreen> {
                   final lessonNum = int.tryParse(controller.text);
                   if (lessonNum != null) {
                     Navigator.pop(context);
-                    openAddKanji(lessonNum);
+                    openKanjiEditor(lessonNum);
                   }
                 },
                 child: const Text('Create'),

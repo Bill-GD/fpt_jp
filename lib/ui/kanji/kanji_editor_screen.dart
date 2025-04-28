@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import '../../data/repositories/kanji_repository.dart';
 import '../../domain/models/kanji_word.dart';
 import '../../utils/extensions/list.dart';
+import '../../utils/extensions/number_duration.dart';
+import '../../utils/helpers/dedent.dart';
 import '../core/styling/text.dart';
+import '../core/ui/action_dialog.dart';
 import '../core/ui/drawer.dart';
 
 class KanjiEditorScreen extends StatefulWidget {
@@ -68,7 +71,27 @@ class _KanjiEditorScreenState extends State<KanjiEditorScreen> {
       appBar: AppBar(
         title: Text('Kanji Editor: Lesson ${widget.lessonNum}'),
         centerTitle: true,
-        actions: const [EndDrawerButton()],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline_rounded),
+            onPressed: () {
+              ActionDialog.static(
+                context,
+                title: 'Help',
+                titleFontSize: 20,
+                textContent: dedent('''
+                Press 'New row' to add new row, 'Submit' to save all changes.
+                Click/Tap on table cell to edit, click/tap outside to save change. Use the 'X' button to cancel change.
+                Row without enough data (empty) will be ignored (insert or update). No deletion available.
+                A row must have the kanji, pronunciation, meaning. Else it's considered empty.
+                '''),
+                contentFontSize: 16,
+                time: 300.ms,
+              );
+            },
+          ),
+          const EndDrawerButton(),
+        ],
         forceMaterialTransparency: true,
       ),
       endDrawer: const MainDrawer(),
@@ -91,7 +114,7 @@ class _KanjiEditorScreenState extends State<KanjiEditorScreen> {
                             setState(() {});
                           },
                     icon: const Icon(Icons.add_rounded),
-                    label: const Text('New term'),
+                    label: const Text('New row'),
                   ),
                   OutlinedButton.icon(
                     onPressed: isInserting
@@ -160,6 +183,13 @@ class _KanjiEditorScreenState extends State<KanjiEditorScreen> {
                                         decoration: textFieldDecoration(
                                           contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                                           border: InputBorder.none,
+                                          hintText: switch (cellIdx) {
+                                            0 => '起きる',
+                                            1 => 'おきる',
+                                            2 => 'KHỞI',
+                                            3 => 'Thức dậy',
+                                            int() => throw UnimplementedError(),
+                                          },
                                           suffixIcon: Tooltip(
                                             message: 'Cancel change',
                                             child: IconButton(

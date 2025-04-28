@@ -1,3 +1,5 @@
 - Some UI changes to accommodate Android screen
 - Kanji editor: use icon to cancel, tap outside to make change
 - Editor ignores empty kanji, sino is optional
+- Kanji editor is used when creating new lesson
+- Added help and hints to Kanji editor
